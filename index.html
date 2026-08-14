@@ -105,6 +105,46 @@
       font-weight: bold;
     }
 
+    /* 24時間統計 */
+
+    .history-extreme-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .history-extreme-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .history-extreme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .extreme-item {
+      text-align: center;
+      padding: 10px;
+      background: #f5f6f7;
+      border-radius: 10px;
+    }
+
+    .extreme-item .label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .extreme-item .value {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
     /* 24時間前との比較 */
 
     .comparison-card {
@@ -125,7 +165,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 0;
+      padding: 7px 0;
       color: #555;
     }
 
@@ -277,6 +317,46 @@
   </div>
 
 
+  <!-- 過去24時間の最高・最低 -->
+
+  <div class="history-extreme-card">
+
+    <div class="history-extreme-title">
+      📊 過去24時間
+    </div>
+
+    <div class="history-extreme-grid">
+
+      <div class="extreme-item">
+
+        <div class="label">
+          🔺 気温最高
+        </div>
+
+        <div class="value">
+          <span id="historyMax">--.-</span>℃
+        </div>
+
+      </div>
+
+
+      <div class="extreme-item">
+
+        <div class="label">
+          🔻 気温最低
+        </div>
+
+        <div class="value">
+          <span id="historyMin">--.-</span>℃
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
   <!-- 24時間前との比較 -->
 
   <div class="comparison-card">
@@ -287,7 +367,7 @@
 
     <div class="comparison-row">
 
-      <span>昨日同時刻</span>
+      <span>昨日同時刻の気温</span>
 
       <strong id="yesterdayTemperature">
         --.-℃
@@ -301,6 +381,26 @@
 
       <strong id="temperatureDifference">
         --.-℃
+      </strong>
+
+    </div>
+
+    <div class="comparison-row">
+
+      <span>湿度差</span>
+
+      <strong id="humidityDifference">
+        --%
+      </strong>
+
+    </div>
+
+    <div class="comparison-row">
+
+      <span>気圧差</span>
+
+      <strong id="pressureDifference">
+        --.-hPa
       </strong>
 
     </div>
@@ -359,14 +459,27 @@
 <script>
 
   /*
+   * ページを10分ごとに自動更新
+   */
+
+  setTimeout(() => {
+    location.reload();
+  }, 10 * 60 * 1000);
+
+
+  /*
    * 現在のデータ
    */
+
+  let currentData = null;
 
   fetch("data.json?cache=" + Date.now())
 
     .then(response => response.json())
 
     .then(data => {
+
+      currentData = data;
 
       document.getElementById(
         "temperature"
@@ -420,21 +533,35 @@
 
 
       /*
-       * 24時間分だけグラフに表示
+       * 24時間前の時刻
        */
 
+      const now =
+        Date.now();
+
       const graphCutoff =
-        Date.now() - 24 * 60 * 60 * 1000;
+        now - 24 * 60 * 60 * 1000;
+
+
+      /*
+       * グラフ用データ
+       */
 
       const graphHistory =
         history.filter(item => {
 
           const itemTime =
             new Date(
-              item.time.replace(" ", "T") + ":00+09:00"
+              item.time.replace(
+                " ",
+                "T"
+              ) + ":00+09:00"
             );
 
-          return itemTime.getTime() >= graphCutoff;
+          return (
+            itemTime.getTime() >=
+            graphCutoff
+          );
 
         });
 
@@ -448,6 +575,41 @@
           return parts[1];
 
         });
+
+
+      /*
+       * 過去24時間の最高・最低
+       */
+
+      const temperatures =
+        graphHistory
+          .map(item =>
+            parseFloat(item.temperature)
+          )
+          .filter(value =>
+            !isNaN(value)
+          );
+
+
+      if (temperatures.length > 0) {
+
+        const max =
+          Math.max(...temperatures);
+
+        const min =
+          Math.min(...temperatures);
+
+        document.getElementById(
+          "historyMax"
+        ).textContent =
+          max.toFixed(1);
+
+        document.getElementById(
+          "historyMin"
+        ).textContent =
+          min.toFixed(1);
+
+      }
 
 
       /*
@@ -725,15 +887,11 @@
 
 
       /*
-       * 24時間前との気温比較
+       * 24時間前との比較
        */
 
-      const now =
-        new Date();
-
       const targetTime =
-        now.getTime() -
-        24 * 60 * 60 * 1000;
+        now - 24 * 60 * 60 * 1000;
 
 
       let closest = null;
@@ -746,8 +904,12 @@
 
         const itemTime =
           new Date(
-            item.time.replace(" ", "T") + ":00+09:00"
+            item.time.replace(
+              " ",
+              "T"
+            ) + ":00+09:00"
           );
+
 
         const difference =
           Math.abs(
@@ -772,13 +934,14 @@
       });
 
 
-      if (closest) {
+      if (
+        closest &&
+        currentData
+      ) {
 
         const currentTemperature =
           parseFloat(
-            document.getElementById(
-              "temperature"
-            ).textContent
+            currentData.temperature
           );
 
         const yesterdayTemperature =
@@ -786,6 +949,30 @@
             closest.temperature
           );
 
+        const currentHumidity =
+          parseFloat(
+            currentData.humidity
+          );
+
+        const yesterdayHumidity =
+          parseFloat(
+            closest.humidity
+          );
+
+        const currentPressure =
+          parseFloat(
+            currentData.pressure
+          );
+
+        const yesterdayPressure =
+          parseFloat(
+            closest.pressure
+          );
+
+
+        /*
+         * 気温差
+         */
 
         if (
           !isNaN(currentTemperature) &&
@@ -796,6 +983,10 @@
             currentTemperature -
             yesterdayTemperature;
 
+          const sign =
+            difference > 0
+              ? "+"
+              : "";
 
           document.getElementById(
             "yesterdayTemperature"
@@ -803,19 +994,68 @@
             yesterdayTemperature.toFixed(1) +
             "℃";
 
-
-          const sign =
-            difference > 0
-              ? "+"
-              : "";
-
-
           document.getElementById(
             "temperatureDifference"
           ).textContent =
             sign +
             difference.toFixed(1) +
             "℃";
+
+        }
+
+
+        /*
+         * 湿度差
+         */
+
+        if (
+          !isNaN(currentHumidity) &&
+          !isNaN(yesterdayHumidity)
+        ) {
+
+          const difference =
+            currentHumidity -
+            yesterdayHumidity;
+
+          const sign =
+            difference > 0
+              ? "+"
+              : "";
+
+          document.getElementById(
+            "humidityDifference"
+          ).textContent =
+            sign +
+            difference.toFixed(0) +
+            "%";
+
+        }
+
+
+        /*
+         * 気圧差
+         */
+
+        if (
+          !isNaN(currentPressure) &&
+          !isNaN(yesterdayPressure)
+        ) {
+
+          const difference =
+            currentPressure -
+            yesterdayPressure;
+
+          const sign =
+            difference > 0
+              ? "+"
+              : "";
+
+          document.getElementById(
+            "pressureDifference"
+          ).textContent =
+            sign +
+            difference.toFixed(1) +
+            "hPa";
 
         }
 
