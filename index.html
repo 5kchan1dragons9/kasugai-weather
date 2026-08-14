@@ -48,6 +48,20 @@
       font-size: 13px;
     }
 
+    /* 観測時刻 */
+
+    .observation-time {
+      font-size: 18px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .observation-time span {
+      font-weight: 700;
+      color: #222;
+    }
+
     /* 現在の気温 */
 
     .main-temperature {
@@ -111,13 +125,15 @@
       margin-top: 2px;
     }
 
-    /* 今日 */
+    /* セクションタイトル */
 
     .section-title {
       font-size: 17px;
       font-weight: 700;
       margin: 24px 3px 10px;
     }
+
+    /* 今日 */
 
     .daily-grid {
       display: grid;
@@ -144,7 +160,7 @@
       font-weight: 700;
     }
 
-    /* 24時間統計 */
+    /* 過去24時間 */
 
     .history-grid {
       display: grid;
@@ -171,7 +187,7 @@
       font-weight: 700;
     }
 
-    /* 前日比較 */
+    /* 24時間前との比較 */
 
     .comparison-card {
       background: white;
@@ -265,6 +281,10 @@
         font-size: 58px;
       }
 
+      .observation-time {
+        font-size: 17px;
+      }
+
       .current-card {
         padding: 15px 8px;
       }
@@ -310,6 +330,20 @@
   <!-- 現在の気温 -->
 
   <div class="main-temperature">
+
+    <div class="observation-time">
+
+      <span id="observationDate">
+        --月--日
+      </span>
+
+      <span id="observationTime">
+        --:--
+      </span>
+
+      現在
+
+    </div>
 
     <div class="label">
       現在の気温
@@ -478,7 +512,7 @@
   </div>
 
 
-  <!-- 前日比較 -->
+  <!-- 24時間前との比較 -->
 
   <div class="section-title">
     🕐 24時間前との比較
@@ -593,7 +627,7 @@
 
   <div class="update-info">
 
-    最終更新：
+    データ取得：
     <span id="updated">
       --:--
     </span>
@@ -644,35 +678,92 @@
 
     currentData = data;
 
+
+    /*
+     * 現在値
+     */
+
     document.getElementById(
       "temperature"
     ).textContent =
       data.temperature;
+
 
     document.getElementById(
       "humidity"
     ).textContent =
       data.humidity;
 
+
     document.getElementById(
       "pressure"
     ).textContent =
       data.pressure;
+
 
     document.getElementById(
       "max_temp"
     ).textContent =
       data.max_temp;
 
+
     document.getElementById(
       "min_temp"
     ).textContent =
       data.min_temp;
 
+
+    /*
+     * 更新時刻
+     */
+
     document.getElementById(
       "updated"
     ).textContent =
       data.updated;
+
+
+    /*
+     * 観測日・時刻
+     */
+
+    const updatedDate =
+      new Date(
+        data.updated.replace(
+          " ",
+          "T"
+        ) +
+        ":00+09:00"
+      );
+
+
+    if (
+      !isNaN(
+        updatedDate.getTime()
+      )
+    ) {
+
+      document.getElementById(
+        "observationDate"
+      ).textContent =
+        (updatedDate.getMonth() + 1) +
+        "月" +
+        updatedDate.getDate() +
+        "日";
+
+
+      document.getElementById(
+        "observationTime"
+      ).textContent =
+        String(
+          updatedDate.getHours()
+        ).padStart(2, "0") +
+        ":" +
+        String(
+          updatedDate.getMinutes()
+        ).padStart(2, "0");
+
+    }
 
   })
 
@@ -682,6 +773,7 @@
       "データ取得エラー:",
       error
     );
+
 
     document.getElementById(
       "errorMessage"
@@ -760,16 +852,18 @@
 
 
     /*
-     * 24時間最高・最低
+     * 過去24時間の最高・最低
      */
 
     const temperatures =
       graphHistory
+
         .map(item =>
           parseFloat(
             item.temperature
           )
         )
+
         .filter(value =>
           !isNaN(value)
         );
@@ -798,7 +892,7 @@
 
 
     /*
-     * グラフラベル
+     * グラフの時刻
      */
 
     const labels =
@@ -815,7 +909,7 @@
 
 
     /*
-     * 共通設定
+     * グラフ共通設定
      */
 
     const commonOptions = {
@@ -863,7 +957,7 @@
 
 
     /*
-     * 気温
+     * 気温グラフ
      */
 
     new Chart(
@@ -936,7 +1030,7 @@
 
 
     /*
-     * 湿度
+     * 湿度グラフ
      */
 
     new Chart(
@@ -1009,7 +1103,7 @@
 
 
     /*
-     * 気圧
+     * 気圧グラフ
      */
 
     new Chart(
@@ -1141,25 +1235,30 @@
           currentData.temperature
         );
 
+
       const yesterdayTemperature =
         parseFloat(
           closest.temperature
         );
+
 
       const currentHumidity =
         parseFloat(
           currentData.humidity
         );
 
+
       const yesterdayHumidity =
         parseFloat(
           closest.humidity
         );
 
+
       const currentPressure =
         parseFloat(
           currentData.pressure
         );
+
 
       const yesterdayPressure =
         parseFloat(
@@ -1168,7 +1267,7 @@
 
 
       /*
-       * 気温
+       * 気温差
        */
 
       if (
@@ -1213,7 +1312,7 @@
 
 
       /*
-       * 湿度
+       * 湿度差
        */
 
       if (
@@ -1249,7 +1348,7 @@
 
 
       /*
-       * 気圧
+       * 気圧差
        */
 
       if (
