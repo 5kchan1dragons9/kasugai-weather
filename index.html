@@ -9,241 +9,695 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+
+      background: #f5f6f7;
+
+      color: #222;
+
+      margin: 0;
+
+      padding: 16px;
+    }
+
+    .container {
       max-width: 800px;
+
       margin: 0 auto;
-      padding: 20px;
     }
 
     h1 {
-      margin-bottom: 25px;
+      margin: 5px 0 20px;
+
+      font-size: 28px;
     }
 
-    .current {
-      margin-bottom: 40px;
+    .updated {
+      color: #666;
+
+      font-size: 13px;
+
+      margin-bottom: 20px;
     }
 
-    .chart-container {
-      margin-top: 30px;
-      margin-bottom: 40px;
+
+    /* 現在値 */
+
+    .current-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 10px;
+
+      margin-bottom: 12px;
     }
 
-    canvas {
-      width: 100% !important;
-      height: 250px !important;
+    .weather-card {
+      background: white;
+
+      border-radius: 14px;
+
+      padding: 16px 10px;
+
+      text-align: center;
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
     }
+
+    .weather-card .icon {
+      font-size: 24px;
+
+      margin-bottom: 6px;
+    }
+
+    .weather-card .value {
+      font-size: 24px;
+
+      font-weight: bold;
+
+      line-height: 1.2;
+    }
+
+    .weather-card .unit {
+      font-size: 13px;
+
+      color: #666;
+
+      margin-top: 4px;
+    }
+
+
+    /* 最高最低 */
+
+    .daily-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 10px;
+
+      margin-bottom: 30px;
+    }
+
+    .daily-card {
+      background: white;
+
+      border-radius: 14px;
+
+      padding: 14px;
+
+      text-align: center;
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .daily-card .label {
+      font-size: 14px;
+
+      color: #666;
+
+      margin-bottom: 5px;
+    }
+
+    .daily-card .value {
+      font-size: 22px;
+
+      font-weight: bold;
+    }
+
+
+    /* グラフ */
+
+    .chart-card {
+      background: white;
+
+      border-radius: 14px;
+
+      padding: 16px;
+
+      margin-bottom: 20px;
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .chart-card h2 {
+      font-size: 18px;
+
+      margin: 0 0 12px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+
+      height: 280px;
+    }
+
+
+    /* スマホ */
+
+    @media (max-width: 600px) {
+
+      body {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .weather-card {
+        padding: 14px 6px;
+      }
+
+      .weather-card .value {
+        font-size: 21px;
+      }
+
+      .chart-wrapper {
+        height: 240px;
+      }
+    }
+
   </style>
 </head>
 
+
 <body>
+
+<div class="container">
 
   <h1>🌤️ 春日井市</h1>
 
-  <div class="current">
+  <div class="updated">
+    最終更新：
+    <span id="updated">--:--</span>
+  </div>
 
-    <p>🌡️ 気温：<span id="temperature">--.-</span>℃</p>
 
-    <p>💧 湿度：<span id="humidity">--</span>%</p>
+  <!-- 現在値 -->
 
-    <p>🧭 気圧：<span id="pressure">----.-</span>hPa</p>
+  <div class="current-grid">
 
-    <p>🔺 今日の最高：<span id="max_temp">--.-</span>℃</p>
+    <div class="weather-card">
 
-    <p>🔻 今日の最低：<span id="min_temp">--.-</span>℃</p>
+      <div class="icon">🌡️</div>
 
-    <p>最終更新：<span id="updated">--:--</span></p>
+      <div class="value">
+        <span id="temperature">--.-</span>
+      </div>
+
+      <div class="unit">
+        気温 ℃
+      </div>
+
+    </div>
+
+
+    <div class="weather-card">
+
+      <div class="icon">💧</div>
+
+      <div class="value">
+        <span id="humidity">--</span>
+      </div>
+
+      <div class="unit">
+        湿度 %
+      </div>
+
+    </div>
+
+
+    <div class="weather-card">
+
+      <div class="icon">🧭</div>
+
+      <div class="value">
+        <span id="pressure">----.-</span>
+      </div>
+
+      <div class="unit">
+        気圧 hPa
+      </div>
+
+    </div>
 
   </div>
 
 
-  <div class="chart-container">
+  <!-- 今日の最高・最低 -->
+
+  <div class="daily-grid">
+
+    <div class="daily-card">
+
+      <div class="label">
+        🔺 今日の最高
+      </div>
+
+      <div class="value">
+        <span id="max_temp">--.-</span>℃
+      </div>
+
+    </div>
+
+
+    <div class="daily-card">
+
+      <div class="label">
+        🔻 今日の最低
+      </div>
+
+      <div class="value">
+        <span id="min_temp">--.-</span>℃
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 気温 -->
+
+  <div class="chart-card">
+
     <h2>🌡️ 気温（24時間）</h2>
-    <canvas id="temperatureChart"></canvas>
+
+    <div class="chart-wrapper">
+
+      <canvas id="temperatureChart"></canvas>
+
+    </div>
+
   </div>
 
 
-  <div class="chart-container">
+  <!-- 湿度 -->
+
+  <div class="chart-card">
+
     <h2>💧 湿度（24時間）</h2>
-    <canvas id="humidityChart"></canvas>
+
+    <div class="chart-wrapper">
+
+      <canvas id="humidityChart"></canvas>
+
+    </div>
+
   </div>
 
 
-  <div class="chart-container">
+  <!-- 気圧 -->
+
+  <div class="chart-card">
+
     <h2>🧭 気圧（24時間）</h2>
-    <canvas id="pressureChart"></canvas>
+
+    <div class="chart-wrapper">
+
+      <canvas id="pressureChart"></canvas>
+
+    </div>
+
   </div>
 
 
-  <script>
-
-    // 現在のデータ
-    fetch("data.json")
-      .then(response => response.json())
-      .then(data => {
-
-        document.getElementById("temperature").textContent = data.temperature;
-
-        document.getElementById("humidity").textContent = data.humidity;
-
-        document.getElementById("pressure").textContent = data.pressure;
-
-        document.getElementById("max_temp").textContent = data.max_temp;
-
-        document.getElementById("min_temp").textContent = data.min_temp;
-
-        document.getElementById("updated").textContent = data.updated;
-
-      })
-      .catch(error => {
-        console.error("データ取得エラー:", error);
-      });
+</div>
 
 
-    // 24時間履歴
-    fetch("history.json")
-      .then(response => response.json())
-      .then(history => {
+<script>
 
-        const labels = history.map(item => {
+  /*
+   * 現在データ
+   */
 
-          const parts = item.time.split(" ");
+  fetch("data.json?cache=" + Date.now())
 
-          return parts[1];
+    .then(response => response.json())
 
-        });
+    .then(data => {
 
+      document.getElementById(
+        "temperature"
+      ).textContent = data.temperature;
 
-        // 気温
-        new Chart(
-          document.getElementById("temperatureChart"),
-          {
-            type: "line",
+      document.getElementById(
+        "humidity"
+      ).textContent = data.humidity;
 
-            data: {
-              labels: labels,
+      document.getElementById(
+        "pressure"
+      ).textContent = data.pressure;
 
-              datasets: [
-                {
-                  label: "気温 ℃",
+      document.getElementById(
+        "max_temp"
+      ).textContent = data.max_temp;
 
-                  data: history.map(
-                    item => item.temperature
-                  ),
+      document.getElementById(
+        "min_temp"
+      ).textContent = data.min_temp;
 
-                  tension: 0.2,
+      document.getElementById(
+        "updated"
+      ).textContent = data.updated;
 
-                  pointRadius: 2
-                }
-              ]
-            },
+    })
 
-            options: {
-              responsive: true,
+    .catch(error => {
 
-              scales: {
-                y: {
-                  title: {
-                    display: true,
-                    text: "℃"
-                  }
-                }
-              }
-            }
-          }
-        );
+      console.error(
+        "データ取得エラー:",
+        error
+      );
+
+    });
 
 
-        // 湿度
-        new Chart(
-          document.getElementById("humidityChart"),
-          {
-            type: "line",
+  /*
+   * 24時間履歴
+   */
 
-            data: {
-              labels: labels,
+  fetch("history.json?cache=" + Date.now())
 
-              datasets: [
-                {
-                  label: "湿度 %",
+    .then(response => response.json())
 
-                  data: history.map(
-                    item => item.humidity
-                  ),
+    .then(history => {
 
-                  tension: 0.2,
+      /*
+       * 時刻
+       */
 
-                  pointRadius: 2
-                }
-              ]
-            },
+      const labels = history.map(item => {
 
-            options: {
-              responsive: true,
+        const parts =
+          item.time.split(" ");
 
-              scales: {
-                y: {
-                  title: {
-                    display: true,
-                    text: "%"
-                  }
-                }
-              }
-            }
-          }
-        );
-
-
-        // 気圧
-        new Chart(
-          document.getElementById("pressureChart"),
-          {
-            type: "line",
-
-            data: {
-              labels: labels,
-
-              datasets: [
-                {
-                  label: "気圧 hPa",
-
-                  data: history.map(
-                    item => item.pressure
-                  ),
-
-                  tension: 0.2,
-
-                  pointRadius: 2
-                }
-              ]
-            },
-
-            options: {
-              responsive: true,
-
-              scales: {
-                y: {
-                  title: {
-                    display: true,
-                    text: "hPa"
-                  }
-                }
-              }
-            }
-          }
-        );
-
-      })
-      .catch(error => {
-
-        console.error(
-          "履歴データ取得エラー:",
-          error
-        );
+        return parts[1];
 
       });
 
-  </script>
+
+      /*
+       * 共通設定
+       */
+
+      const commonOptions = {
+
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        interaction: {
+
+          mode: "index",
+
+          intersect: false
+
+        },
+
+        plugins: {
+
+          legend: {
+
+            display: false
+
+          },
+
+          tooltip: {
+
+            callbacks: {
+
+              title: function(items) {
+
+                return items[0].label;
+
+              }
+
+            }
+
+          }
+
+        },
+
+        scales: {
+
+          x: {
+
+            ticks: {
+
+              maxTicksLimit: 8,
+
+              autoSkip: true
+
+            }
+
+          }
+
+        }
+
+      };
+
+
+      /*
+       * 気温
+       */
+
+      new Chart(
+
+        document.getElementById(
+          "temperatureChart"
+        ),
+
+        {
+
+          type: "line",
+
+          data: {
+
+            labels: labels,
+
+            datasets: [
+
+              {
+
+                label: "気温 ℃",
+
+                data: history.map(
+                  item => item.temperature
+                ),
+
+                tension: 0.25,
+
+                pointRadius: 1,
+
+                pointHoverRadius: 5,
+
+                fill: false
+
+              }
+
+            ]
+
+          },
+
+          options: {
+
+            ...commonOptions,
+
+            scales: {
+
+              ...commonOptions.scales,
+
+              y: {
+
+                title: {
+
+                  display: true,
+
+                  text: "℃"
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      );
+
+
+      /*
+       * 湿度
+       */
+
+      new Chart(
+
+        document.getElementById(
+          "humidityChart"
+        ),
+
+        {
+
+          type: "line",
+
+          data: {
+
+            labels: labels,
+
+            datasets: [
+
+              {
+
+                label: "湿度 %",
+
+                data: history.map(
+                  item => item.humidity
+                ),
+
+                tension: 0.25,
+
+                pointRadius: 1,
+
+                pointHoverRadius: 5,
+
+                fill: false
+
+              }
+
+            ]
+
+          },
+
+          options: {
+
+            ...commonOptions,
+
+            scales: {
+
+              ...commonOptions.scales,
+
+              y: {
+
+                title: {
+
+                  display: true,
+
+                  text: "%"
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      );
+
+
+      /*
+       * 気圧
+       */
+
+      new Chart(
+
+        document.getElementById(
+          "pressureChart"
+        ),
+
+        {
+
+          type: "line",
+
+          data: {
+
+            labels: labels,
+
+            datasets: [
+
+              {
+
+                label: "気圧 hPa",
+
+                data: history.map(
+                  item => item.pressure
+                ),
+
+                tension: 0.25,
+
+                pointRadius: 1,
+
+                pointHoverRadius: 5,
+
+                fill: false
+
+              }
+
+            ]
+
+          },
+
+          options: {
+
+            ...commonOptions,
+
+            scales: {
+
+              ...commonOptions.scales,
+
+              y: {
+
+                title: {
+
+                  display: true,
+
+                  text: "hPa"
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      );
+
+    })
+
+    .catch(error => {
+
+      console.error(
+        "履歴データ取得エラー:",
+        error
+      );
+
+    });
+
+</script>
 
 </body>
 </html>
