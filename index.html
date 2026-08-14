@@ -5,17 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>春日井市の気象</title>
 </head>
+
 <body>
   <h1>🌤️ 春日井市</h1>
-  <h2>Netatmo Weather Station</h2>
 
-  <p>🌡️ 気温：--.-℃</p>
-  <p>💧 湿度：--%</p>
-  <p>🧭 気圧：----.-hPa</p>
+  <p>🌡️ 気温：<span id="temperature">--.-</span>℃</p>
+  <p>💧 湿度：<span id="humidity">--</span>%</p>
+  <p>🧭 気圧：<span id="pressure">----.-</span>hPa</p>
 
-  <p>🔺 今日の最高：--.-℃</p>
-  <p>🔻 今日の最低：--.-℃</p>
+  <p>🔺 今日の最高：<span id="max_temp">--.-</span>℃</p>
+  <p>🔻 今日の最低：<span id="min_temp">--.-</span>℃</p>
 
-  <p>最終更新：--:--</p>
+  <p>最終更新：<span id="updated">--:--</span></p>
+
+  <script>
+    fetch("data.json")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("temperature").textContent = data.temperature;
+        document.getElementById("humidity").textContent = data.humidity;
+        document.getElementById("pressure").textContent = data.pressure;
+        document.getElementById("max_temp").textContent = data.max_temp;
+        document.getElementById("min_temp").textContent = data.min_temp;
+        document.getElementById("updated").textContent = data.updated;
+      })
+      .catch(error => {
+        console.error("データ取得エラー:", error);
+      });
+  </script>
 </body>
 </html>
