@@ -3,35 +3,247 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>春日井市の気象</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+    }
+
+    .current {
+      margin-bottom: 40px;
+    }
+
+    .chart-container {
+      margin-top: 30px;
+      margin-bottom: 40px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 250px !important;
+    }
+  </style>
 </head>
 
 <body>
+
   <h1>🌤️ 春日井市</h1>
 
-  <p>🌡️ 気温：<span id="temperature">--.-</span>℃</p>
-  <p>💧 湿度：<span id="humidity">--</span>%</p>
-  <p>🧭 気圧：<span id="pressure">----.-</span>hPa</p>
+  <div class="current">
 
-  <p>🔺 今日の最高：<span id="max_temp">--.-</span>℃</p>
-  <p>🔻 今日の最低：<span id="min_temp">--.-</span>℃</p>
+    <p>🌡️ 気温：<span id="temperature">--.-</span>℃</p>
 
-  <p>最終更新：<span id="updated">--:--</span></p>
+    <p>💧 湿度：<span id="humidity">--</span>%</p>
+
+    <p>🧭 気圧：<span id="pressure">----.-</span>hPa</p>
+
+    <p>🔺 今日の最高：<span id="max_temp">--.-</span>℃</p>
+
+    <p>🔻 今日の最低：<span id="min_temp">--.-</span>℃</p>
+
+    <p>最終更新：<span id="updated">--:--</span></p>
+
+  </div>
+
+
+  <div class="chart-container">
+    <h2>🌡️ 気温（24時間）</h2>
+    <canvas id="temperatureChart"></canvas>
+  </div>
+
+
+  <div class="chart-container">
+    <h2>💧 湿度（24時間）</h2>
+    <canvas id="humidityChart"></canvas>
+  </div>
+
+
+  <div class="chart-container">
+    <h2>🧭 気圧（24時間）</h2>
+    <canvas id="pressureChart"></canvas>
+  </div>
+
 
   <script>
+
+    // 現在のデータ
     fetch("data.json")
       .then(response => response.json())
       .then(data => {
+
         document.getElementById("temperature").textContent = data.temperature;
+
         document.getElementById("humidity").textContent = data.humidity;
+
         document.getElementById("pressure").textContent = data.pressure;
+
         document.getElementById("max_temp").textContent = data.max_temp;
+
         document.getElementById("min_temp").textContent = data.min_temp;
+
         document.getElementById("updated").textContent = data.updated;
+
       })
       .catch(error => {
         console.error("データ取得エラー:", error);
       });
+
+
+    // 24時間履歴
+    fetch("history.json")
+      .then(response => response.json())
+      .then(history => {
+
+        const labels = history.map(item => {
+
+          const parts = item.time.split(" ");
+
+          return parts[1];
+
+        });
+
+
+        // 気温
+        new Chart(
+          document.getElementById("temperatureChart"),
+          {
+            type: "line",
+
+            data: {
+              labels: labels,
+
+              datasets: [
+                {
+                  label: "気温 ℃",
+
+                  data: history.map(
+                    item => item.temperature
+                  ),
+
+                  tension: 0.2,
+
+                  pointRadius: 2
+                }
+              ]
+            },
+
+            options: {
+              responsive: true,
+
+              scales: {
+                y: {
+                  title: {
+                    display: true,
+                    text: "℃"
+                  }
+                }
+              }
+            }
+          }
+        );
+
+
+        // 湿度
+        new Chart(
+          document.getElementById("humidityChart"),
+          {
+            type: "line",
+
+            data: {
+              labels: labels,
+
+              datasets: [
+                {
+                  label: "湿度 %",
+
+                  data: history.map(
+                    item => item.humidity
+                  ),
+
+                  tension: 0.2,
+
+                  pointRadius: 2
+                }
+              ]
+            },
+
+            options: {
+              responsive: true,
+
+              scales: {
+                y: {
+                  title: {
+                    display: true,
+                    text: "%"
+                  }
+                }
+              }
+            }
+          }
+        );
+
+
+        // 気圧
+        new Chart(
+          document.getElementById("pressureChart"),
+          {
+            type: "line",
+
+            data: {
+              labels: labels,
+
+              datasets: [
+                {
+                  label: "気圧 hPa",
+
+                  data: history.map(
+                    item => item.pressure
+                  ),
+
+                  tension: 0.2,
+
+                  pointRadius: 2
+                }
+              ]
+            },
+
+            options: {
+              responsive: true,
+
+              scales: {
+                y: {
+                  title: {
+                    display: true,
+                    text: "hPa"
+                  }
+                }
+              }
+            }
+          }
+        );
+
+      })
+      .catch(error => {
+
+        console.error(
+          "履歴データ取得エラー:",
+          error
+        );
+
+      });
+
   </script>
+
 </body>
 </html>
