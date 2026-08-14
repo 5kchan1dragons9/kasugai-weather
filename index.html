@@ -22,152 +22,137 @@
         sans-serif;
 
       background: #f5f6f7;
-
       color: #222;
-
       margin: 0;
-
       padding: 16px;
     }
 
     .container {
       max-width: 800px;
-
       margin: 0 auto;
     }
 
     h1 {
       margin: 5px 0 20px;
-
       font-size: 28px;
     }
 
     .updated {
       color: #666;
-
       font-size: 13px;
-
       margin-bottom: 20px;
     }
-
 
     /* 現在値 */
 
     .current-grid {
       display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-
       margin-bottom: 12px;
     }
 
     .weather-card {
       background: white;
-
       border-radius: 14px;
-
       padding: 16px 10px;
-
       text-align: center;
-
-      box-shadow:
-        0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .weather-card .icon {
       font-size: 24px;
-
       margin-bottom: 6px;
     }
 
     .weather-card .value {
       font-size: 24px;
-
       font-weight: bold;
-
       line-height: 1.2;
     }
 
     .weather-card .unit {
       font-size: 13px;
-
       color: #666;
-
       margin-top: 4px;
     }
 
-
-    /* 最高最低 */
+    /* 今日の最高・最低 */
 
     .daily-grid {
       display: grid;
-
-      grid-template-columns:
-        repeat(2, 1fr);
-
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-
-      margin-bottom: 30px;
+      margin-bottom: 12px;
     }
 
     .daily-card {
       background: white;
-
       border-radius: 14px;
-
       padding: 14px;
-
       text-align: center;
-
-      box-shadow:
-        0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .daily-card .label {
       font-size: 14px;
-
       color: #666;
-
       margin-bottom: 5px;
     }
 
     .daily-card .value {
       font-size: 22px;
-
       font-weight: bold;
     }
 
+    /* 24時間前との比較 */
+
+    .comparison-card {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .comparison-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .comparison-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      color: #555;
+    }
+
+    .comparison-row strong {
+      color: #222;
+      font-size: 18px;
+    }
 
     /* グラフ */
 
     .chart-card {
       background: white;
-
       border-radius: 14px;
-
       padding: 16px;
-
       margin-bottom: 20px;
-
-      box-shadow:
-        0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .chart-card h2 {
       font-size: 18px;
-
       margin: 0 0 12px;
     }
 
     .chart-wrapper {
       position: relative;
-
       height: 280px;
     }
-
 
     /* スマホ */
 
@@ -193,7 +178,6 @@
         height: 240px;
       }
     }
-
   </style>
 </head>
 
@@ -209,20 +193,7 @@
     <span id="updated">--:--</span>
   </div>
 
-<div class="comparison-card">
-  <div class="comparison-title">📊 24時間前との比較</div>
 
-  <div class="comparison-row">
-    <span>昨日同時刻</span>
-    <strong id="yesterdayTemperature">--.-℃</strong>
-  </div>
-
-  <div class="comparison-row">
-    <span>気温差</span>
-    <strong id="temperatureDifference">--.-℃</strong>
-  </div>
-</div>
-  
   <!-- 現在値 -->
 
   <div class="current-grid">
@@ -306,6 +277,37 @@
   </div>
 
 
+  <!-- 24時間前との比較 -->
+
+  <div class="comparison-card">
+
+    <div class="comparison-title">
+      📊 24時間前との比較
+    </div>
+
+    <div class="comparison-row">
+
+      <span>昨日同時刻</span>
+
+      <strong id="yesterdayTemperature">
+        --.-℃
+      </strong>
+
+    </div>
+
+    <div class="comparison-row">
+
+      <span>気温差</span>
+
+      <strong id="temperatureDifference">
+        --.-℃
+      </strong>
+
+    </div>
+
+  </div>
+
+
   <!-- 気温 -->
 
   <div class="chart-card">
@@ -357,7 +359,7 @@
 <script>
 
   /*
-   * 現在データ
+   * 現在のデータ
    */
 
   fetch("data.json?cache=" + Date.now())
@@ -403,7 +405,7 @@
 
 
   /*
-   * 24時間履歴
+   * 履歴データ
    */
 
   fetch("history.json?cache=" + Date.now())
@@ -412,22 +414,44 @@
 
     .then(history => {
 
+      if (!history || history.length === 0) {
+        return;
+      }
+
+
       /*
-       * 時刻
+       * 24時間分だけグラフに表示
        */
 
-      const labels = history.map(item => {
+      const graphCutoff =
+        Date.now() - 24 * 60 * 60 * 1000;
 
-        const parts =
-          item.time.split(" ");
+      const graphHistory =
+        history.filter(item => {
 
-        return parts[1];
+          const itemTime =
+            new Date(
+              item.time.replace(" ", "T") + ":00+09:00"
+            );
 
-      });
+          return itemTime.getTime() >= graphCutoff;
+
+        });
+
+
+      const labels =
+        graphHistory.map(item => {
+
+          const parts =
+            item.time.split(" ");
+
+          return parts[1];
+
+        });
 
 
       /*
-       * 共通設定
+       * 共通グラフ設定
        */
 
       const commonOptions = {
@@ -488,7 +512,7 @@
 
 
       /*
-       * 気温
+       * 気温グラフ
        */
 
       new Chart(
@@ -511,7 +535,7 @@
 
                 label: "気温 ℃",
 
-                data: history.map(
+                data: graphHistory.map(
                   item => item.temperature
                 ),
 
@@ -559,7 +583,7 @@
 
 
       /*
-       * 湿度
+       * 湿度グラフ
        */
 
       new Chart(
@@ -582,7 +606,7 @@
 
                 label: "湿度 %",
 
-                data: history.map(
+                data: graphHistory.map(
                   item => item.humidity
                 ),
 
@@ -630,7 +654,7 @@
 
 
       /*
-       * 気圧
+       * 気圧グラフ
        */
 
       new Chart(
@@ -653,7 +677,7 @@
 
                 label: "気圧 hPa",
 
-                data: history.map(
+                data: graphHistory.map(
                   item => item.pressure
                 ),
 
@@ -698,6 +722,104 @@
         }
 
       );
+
+
+      /*
+       * 24時間前との気温比較
+       */
+
+      const now =
+        new Date();
+
+      const targetTime =
+        now.getTime() -
+        24 * 60 * 60 * 1000;
+
+
+      let closest = null;
+
+      let closestDifference =
+        Infinity;
+
+
+      history.forEach(item => {
+
+        const itemTime =
+          new Date(
+            item.time.replace(" ", "T") + ":00+09:00"
+          );
+
+        const difference =
+          Math.abs(
+            itemTime.getTime() -
+            targetTime
+          );
+
+
+        if (
+          difference <
+          closestDifference
+        ) {
+
+          closestDifference =
+            difference;
+
+          closest =
+            item;
+
+        }
+
+      });
+
+
+      if (closest) {
+
+        const currentTemperature =
+          parseFloat(
+            document.getElementById(
+              "temperature"
+            ).textContent
+          );
+
+        const yesterdayTemperature =
+          parseFloat(
+            closest.temperature
+          );
+
+
+        if (
+          !isNaN(currentTemperature) &&
+          !isNaN(yesterdayTemperature)
+        ) {
+
+          const difference =
+            currentTemperature -
+            yesterdayTemperature;
+
+
+          document.getElementById(
+            "yesterdayTemperature"
+          ).textContent =
+            yesterdayTemperature.toFixed(1) +
+            "℃";
+
+
+          const sign =
+            difference > 0
+              ? "+"
+              : "";
+
+
+          document.getElementById(
+            "temperatureDifference"
+          ).textContent =
+            sign +
+            difference.toFixed(1) +
+            "℃";
+
+        }
+
+      }
 
     })
 
