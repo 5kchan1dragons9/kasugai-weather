@@ -18,55 +18,86 @@
       box-sizing: border-box;
     }
 
+
     html,
     body {
+
       margin: 0;
       padding: 0;
+
       width: 100%;
       height: 100%;
+
       overflow: hidden;
+
       background: #f3f5f7;
+
       font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Helvetica Neue",
         Arial,
         sans-serif;
+
     }
+
 
     /* ================================
        上部タブ
        ================================ */
 
     .tabs {
+
       display: flex;
+
       width: 100%;
       height: 54px;
+
       background: white;
+
       border-bottom: 1px solid #ddd;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.08);
+
       position: relative;
+
       z-index: 10;
+
     }
 
 
     .tab {
+
       flex: 1;
+
       border: none;
+
       background: white;
+
       color: #777;
+
       font-size: 16px;
+
       font-weight: 600;
+
       cursor: pointer;
 
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color:
+        transparent;
+
     }
 
 
     .tab.active {
+
       color: #222;
+
       background: #f3f5f7;
-      box-shadow: inset 0 -3px 0 #222;
+
+      box-shadow:
+        inset 0 -3px 0 #222;
+
     }
 
 
@@ -75,27 +106,41 @@
        ================================ */
 
     .pages {
+
       position: relative;
+
       width: 100%;
+
       height: calc(100vh - 54px);
+
       overflow: hidden;
+
     }
 
 
     .page {
+
       display: none;
+
       position: absolute;
+
       top: 0;
       left: 0;
+
       width: 100%;
       height: 100%;
+
       border: none;
+
       background: #f3f5f7;
+
     }
 
 
     .page.active {
+
       display: block;
+
     }
 
   </style>
@@ -111,6 +156,7 @@
        ================================ -->
 
   <div class="tabs">
+
 
     <button
       class="tab active"
@@ -129,14 +175,16 @@
       🏠 屋内
     </button>
 
+
     <button
-  class="tab"
-  id="warningTab"
-  type="button"
->
-  ⚠️ 注警報
-</button>
-    
+      class="tab"
+      id="warningTab"
+      type="button"
+    >
+      ⚠️ 注警報
+    </button>
+
+
   </div>
 
 
@@ -146,6 +194,7 @@
        ================================ -->
 
   <div class="pages">
+
 
     <iframe
       id="outdoorPage"
@@ -162,12 +211,14 @@
       title="屋内"
     ></iframe>
 
-<iframe
-  id="warningPage"
-  class="page"
-  src="warning.html"
-  title="注警報"
-></iframe>
+
+    <iframe
+      id="warningPage"
+      class="page"
+      src="warning.html"
+      title="注警報"
+    ></iframe>
+
 
   </div>
 
@@ -190,80 +241,125 @@
 
     function showPage(page) {
 
-  const outdoorPage =
-    document.getElementById(
-      "outdoorPage"
-    );
 
-  const indoorPage =
-    document.getElementById(
-      "indoorPage"
-    );
-
-  const warningPage =
-    document.getElementById(
-      "warningPage"
-    );
-
-  const outdoorTab =
-    document.getElementById(
-      "outdoorTab"
-    );
-
-  const indoorTab =
-    document.getElementById(
-      "indoorTab"
-    );
-
-  const warningTab =
-    document.getElementById(
-      "warningTab"
-    );
+      const outdoorPage =
+        document.getElementById(
+          "outdoorPage"
+        );
 
 
-  /* いったん全部非表示 */
-
-  outdoorPage.classList.remove("active");
-  indoorPage.classList.remove("active");
-  warningPage.classList.remove("active");
-
-  outdoorTab.classList.remove("active");
-  indoorTab.classList.remove("active");
-  warningTab.classList.remove("active");
+      const indoorPage =
+        document.getElementById(
+          "indoorPage"
+        );
 
 
-  /* 選択されたページだけ表示 */
-
-  if (page === "outdoor") {
-
-    outdoorPage.classList.add("active");
-    outdoorTab.classList.add("active");
-
-    currentPage = "outdoor";
-
-  }
+      const warningPage =
+        document.getElementById(
+          "warningPage"
+        );
 
 
-  if (page === "indoor") {
-
-    indoorPage.classList.add("active");
-    indoorTab.classList.add("active");
-
-    currentPage = "indoor";
-
-  }
+      const outdoorTab =
+        document.getElementById(
+          "outdoorTab"
+        );
 
 
-  if (page === "warning") {
+      const indoorTab =
+        document.getElementById(
+          "indoorTab"
+        );
 
-    warningPage.classList.add("active");
-    warningTab.classList.add("active");
 
-    currentPage = "warning";
+      const warningTab =
+        document.getElementById(
+          "warningTab"
+        );
 
-  }
 
-}
+
+      /* --------------------------------
+         いったん全部非表示
+         -------------------------------- */
+
+      outdoorPage.classList.remove(
+        "active"
+      );
+
+      indoorPage.classList.remove(
+        "active"
+      );
+
+      warningPage.classList.remove(
+        "active"
+      );
+
+
+      outdoorTab.classList.remove(
+        "active"
+      );
+
+      indoorTab.classList.remove(
+        "active"
+      );
+
+      warningTab.classList.remove(
+        "active"
+      );
+
+
+
+      /* --------------------------------
+         選択されたページだけ表示
+         -------------------------------- */
+
+      if (page === "outdoor") {
+
+        outdoorPage.classList.add(
+          "active"
+        );
+
+        outdoorTab.classList.add(
+          "active"
+        );
+
+        currentPage = "outdoor";
+
+      }
+
+
+      if (page === "indoor") {
+
+        indoorPage.classList.add(
+          "active"
+        );
+
+        indoorTab.classList.add(
+          "active"
+        );
+
+        currentPage = "indoor";
+
+      }
+
+
+      if (page === "warning") {
+
+        warningPage.classList.add(
+          "active"
+        );
+
+        warningTab.classList.add(
+          "active"
+        );
+
+        currentPage = "warning";
+
+      }
+
+    }
+
 
 
     /* ================================
@@ -293,25 +389,36 @@
         }
       );
 
-document
-  .getElementById("warningTab")
-  .addEventListener(
-    "click",
-    function() {
 
-      showPage("warning");
+    document
+      .getElementById("warningTab")
+      .addEventListener(
+        "click",
+        function() {
 
-    }
-  );
+          showPage("warning");
+
+        }
+      );
+
+
 
     /* ================================
        iframe内部へのスワイプ検知
        
-       outdoor.html / indoor.html
-       は変更しない。
-       
-       index.htmlからiframe内部の
-       documentにイベントを設定する。
+       スワイプ順：
+
+       屋外
+        ↓ 左
+       屋内
+        ↓ 左
+       注警報
+
+       注警報
+        ↓ 右
+       屋内
+        ↓ 右
+       屋外
        ================================ */
 
     function setupSwipe(
@@ -321,6 +428,7 @@ document
 
 
       try {
+
 
         const iframeDocument =
           iframe.contentDocument ||
@@ -335,10 +443,16 @@ document
 
 
         let startX = 0;
+
         let startY = 0;
+
         let startTime = 0;
 
 
+
+        /* --------------------------------
+           タッチ開始
+           -------------------------------- */
 
         iframeDocument.addEventListener(
           "touchstart",
@@ -377,6 +491,10 @@ document
         );
 
 
+
+        /* --------------------------------
+           タッチ終了
+           -------------------------------- */
 
         iframeDocument.addEventListener(
           "touchend",
@@ -419,13 +537,13 @@ document
 
 
 
-            /*
-             * 横方向50px以上
-             *
-             * 横移動が縦移動より大きい
-             *
-             * 1秒以内
-             */
+            /* --------------------------------
+               スワイプ判定
+
+               ・横方向50px以上
+               ・横移動が縦移動より大きい
+               ・1秒以内
+               -------------------------------- */
 
             const horizontal =
               Math.abs(diffX) >= 50 &&
@@ -444,13 +562,10 @@ document
             ) {
 
 
-              /*
-               * 屋外
-               *
-               * 左スワイプ
-               * ↓
-               * 屋内
-               */
+              /* ============================
+                 屋外 → 屋内
+                 左スワイプ
+                 ============================ */
 
               if (
                 pageName === "outdoor" &&
@@ -463,13 +578,26 @@ document
 
 
 
-              /*
-               * 屋内
-               *
-               * 右スワイプ
-               * ↓
-               * 屋外
-               */
+              /* ============================
+                 屋内 → 注警報
+                 左スワイプ
+                 ============================ */
+
+              if (
+                pageName === "indoor" &&
+                diffX < 0
+              ) {
+
+                showPage("warning");
+
+              }
+
+
+
+              /* ============================
+                 屋内 → 屋外
+                 右スワイプ
+                 ============================ */
 
               if (
                 pageName === "indoor" &&
@@ -480,12 +608,34 @@ document
 
               }
 
+
+
+              /* ============================
+                 注警報 → 屋内
+                 右スワイプ
+                 ============================ */
+
+              if (
+                pageName === "warning" &&
+                diffX > 0
+              ) {
+
+                showPage("indoor");
+
+              }
+
             }
 
 
 
+            /* --------------------------------
+               初期化
+               -------------------------------- */
+
             startX = 0;
+
             startY = 0;
+
             startTime = 0;
 
           },
@@ -494,14 +644,18 @@ document
           }
         );
 
+
       }
 
+
       catch (error) {
+
 
         console.error(
           "スワイプ設定エラー:",
           error
         );
+
 
       }
 
@@ -525,6 +679,16 @@ document
       );
 
 
+    const warningPage =
+      document.getElementById(
+        "warningPage"
+      );
+
+
+
+    /* --------------------------------
+       屋外
+       -------------------------------- */
 
     outdoorPage.addEventListener(
       "load",
@@ -538,6 +702,11 @@ document
       }
     );
 
+
+
+    /* --------------------------------
+       屋内
+       -------------------------------- */
 
     indoorPage.addEventListener(
       "load",
@@ -553,10 +722,27 @@ document
 
 
 
-    /*
-     * 念のため、
-     * すでに読み込み済みの場合にも設定
-     */
+    /* --------------------------------
+       注警報
+       -------------------------------- */
+
+    warningPage.addEventListener(
+      "load",
+      function() {
+
+        setupSwipe(
+          warningPage,
+          "warning"
+        );
+
+      }
+    );
+
+
+
+    /* ================================
+       すでに読み込み済みの場合
+       ================================ */
 
     if (
       outdoorPage.contentDocument &&
@@ -581,6 +767,20 @@ document
       setupSwipe(
         indoorPage,
         "indoor"
+      );
+
+    }
+
+
+    if (
+      warningPage.contentDocument &&
+      warningPage.contentDocument.readyState !==
+        "loading"
+    ) {
+
+      setupSwipe(
+        warningPage,
+        "warning"
       );
 
     }
