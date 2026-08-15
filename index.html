@@ -119,7 +119,7 @@ body.indoor .tab {
 </head>
 
 
-<body>
+<body class="outdoor">
 
 
   <!-- ================================
@@ -191,8 +191,15 @@ body.indoor .tab {
 
     function showPage(page) {
 
+  document.body.classList.remove(
+    "outdoor",
+    "indoor"
+  );
 
-      const outdoorPage =
+  document.body.classList.add(page);
+
+
+  const outdoorPage =
         document.getElementById(
           "outdoorPage"
         );
