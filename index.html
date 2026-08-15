@@ -166,6 +166,12 @@
       font-weight: 700;
     }
 
+    .daily-card .time {
+      margin-top: 5px;
+      color: #777;
+      font-size: 12px;
+    }
+
     /* 過去24時間 */
 
     .history-grid {
@@ -510,6 +516,13 @@
 
       </div>
 
+      <div
+        class="time"
+        id="maxTempTime"
+      >
+        --:--
+      </div>
+
     </div>
 
 
@@ -528,6 +541,13 @@
 
         ℃
 
+      </div>
+
+      <div
+        class="time"
+        id="minTempTime"
+      >
+        --:--
       </div>
 
     </div>
@@ -654,8 +674,6 @@
 
   <div class="ranking-grid">
 
-    <!-- 最高気温 -->
-
     <div class="ranking-card">
 
       <div class="ranking-title">
@@ -672,8 +690,6 @@
 
     </div>
 
-
-    <!-- 最低気温 -->
 
     <div class="ranking-card">
 
@@ -886,6 +902,74 @@
 
     }
 
+
+    /*
+     * 最高・最低気温の発生時刻
+     */
+
+    function formatTemperatureTime(
+      value
+    ) {
+
+      if (!value) {
+        return "--:--";
+      }
+
+
+      const date =
+        new Date(
+          value.replace(
+            " ",
+            "T"
+          ) +
+          ":00+09:00"
+        );
+
+
+      if (
+        isNaN(
+          date.getTime()
+        )
+      ) {
+
+        return "--:--";
+
+      }
+
+
+      return (
+        String(
+          date.getHours()
+        ).padStart(2, "0") +
+        ":" +
+        String(
+          date.getMinutes()
+        ).padStart(2, "0"
+        )
+      );
+
+    }
+
+
+    document.getElementById(
+      "maxTempTime"
+    ).textContent =
+      data.date_max_temp
+        ? formatTemperatureTime(
+            data.date_max_temp
+          )
+        : "--:--";
+
+
+    document.getElementById(
+      "minTempTime"
+    ).textContent =
+      data.date_min_temp
+        ? formatTemperatureTime(
+            data.date_min_temp
+          )
+        : "--:--";
+
   })
 
   .catch(error => {
@@ -935,17 +1019,9 @@
     }
 
 
-    /*
-     * 現在時刻
-     */
-
     const now =
       Date.now();
 
-
-    /*
-     * 過去24時間
-     */
 
     const cutoff =
       now -
@@ -1566,10 +1642,6 @@
       now.getMonth() + 1;
 
 
-    /*
-     * 月表示
-     */
-
     document.getElementById(
       "rankingMonth"
     ).textContent =
@@ -1577,7 +1649,7 @@
 
 
     /*
-     * 今月のデータだけ抽出
+     * 今月のデータ
      */
 
     const prefix =
@@ -1648,10 +1720,6 @@
         .slice(0, 3);
 
 
-    /*
-     * 日付表示
-     */
-
     function formatDate(
       dateString
     ) {
@@ -1670,10 +1738,6 @@
 
     }
 
-
-    /*
-     * ランキング表示
-     */
 
     function createRanking(
       items,
@@ -1765,10 +1829,6 @@
     }
 
 
-    /*
-     * 最高気温ランキングを表示
-     */
-
     document.getElementById(
       "maxRanking"
     ).innerHTML =
@@ -1778,10 +1838,6 @@
         "max_temp_time"
       );
 
-
-    /*
-     * 最低気温ランキングを表示
-     */
 
     document.getElementById(
       "minRanking"
