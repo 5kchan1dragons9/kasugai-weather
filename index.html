@@ -131,10 +131,10 @@
 
     <button
   class="tab"
-  id="recordTab"
+  id="warningTab"
   type="button"
 >
-  📚 記録
+  ⚠️ 注警報
 </button>
     
   </div>
@@ -163,10 +163,10 @@
     ></iframe>
 
 <iframe
-  id="recordPage"
+  id="warningPage"
   class="page"
-  src="record.html"
-  title="記録"
+  src="warning.html"
+  title="注警報"
 ></iframe>
 
   </div>
@@ -200,9 +200,9 @@
       "indoorPage"
     );
 
-  const recordPage =
+  const warningPage =
     document.getElementById(
-      "recordPage"
+      "warningPage"
     );
 
   const outdoorTab =
@@ -215,9 +215,9 @@
       "indoorTab"
     );
 
-  const recordTab =
+  const warningTab =
     document.getElementById(
-      "recordTab"
+      "warningTab"
     );
 
 
@@ -225,11 +225,11 @@
 
   outdoorPage.classList.remove("active");
   indoorPage.classList.remove("active");
-  recordPage.classList.remove("active");
+  warningPage.classList.remove("active");
 
   outdoorTab.classList.remove("active");
   indoorTab.classList.remove("active");
-  recordTab.classList.remove("active");
+  warningTab.classList.remove("active");
 
 
   /* 選択されたページだけ表示 */
@@ -254,12 +254,12 @@
   }
 
 
-  if (page === "record") {
+  if (page === "warning") {
 
-    recordPage.classList.add("active");
-    recordTab.classList.add("active");
+    warningPage.classList.add("active");
+    warningTab.classList.add("active");
 
-    currentPage = "record";
+    currentPage = "warning";
 
   }
 
@@ -294,12 +294,12 @@
       );
 
 document
-  .getElementById("recordTab")
+  .getElementById("warningTab")
   .addEventListener(
     "click",
     function() {
 
-      showPage("record");
+      showPage("warning");
 
     }
   );
