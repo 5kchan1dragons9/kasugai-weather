@@ -168,6 +168,16 @@
       margin-top: 4px;
     }
 
+    /* 三角マーク */
+
+    .max-triangle {
+      color: #e53935;
+    }
+
+    .min-triangle {
+      color: #1976d2;
+    }
+
     /* 過去24時間 */
 
     .history-grid {
@@ -242,6 +252,41 @@
       margin-bottom: 12px;
     }
 
+    /* 今日の最高・最低 */
+
+    .chart-summary {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: #f7f8fa;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .chart-summary-item {
+      flex: 1;
+      text-align: center;
+    }
+
+    .chart-summary-label {
+      color: #777;
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    .chart-summary-value {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .chart-summary-time {
+      color: #777;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
     .chart-wrapper {
       position: relative;
       height: 270px;
@@ -303,6 +348,14 @@
 
       .chart-wrapper {
         height: 240px;
+      }
+
+      .chart-summary {
+        padding: 9px 6px;
+      }
+
+      .chart-summary-value {
+        font-size: 16px;
       }
 
     }
@@ -435,7 +488,8 @@
     <div class="daily-card">
 
       <div class="label">
-        🔺 最高気温
+        <span class="max-triangle">▲</span>
+        最高気温
       </div>
 
       <div class="value">
@@ -462,7 +516,8 @@
     <div class="daily-card">
 
       <div class="label">
-        🔻 最低気温
+        <span class="min-triangle">▼</span>
+        最低気温
       </div>
 
       <div class="value">
@@ -499,7 +554,8 @@
     <div class="history-card">
 
       <div class="label">
-        🔺 最高気温
+        <span class="max-triangle">▲</span>
+        最高気温
       </div>
 
       <div class="value">
@@ -518,7 +574,8 @@
     <div class="history-card">
 
       <div class="label">
-        🔻 最低気温
+        <span class="min-triangle">▼</span>
+        最低気温
       </div>
 
       <div class="value">
@@ -604,6 +661,55 @@
 
     <div class="chart-title">
       🌡️ 気温（24時間）
+    </div>
+
+    <div class="chart-summary">
+
+      <div class="chart-summary-item">
+
+        <div class="chart-summary-label">
+          <span class="max-triangle">▲</span>
+          今日の最高
+        </div>
+
+        <div class="chart-summary-value">
+          <span id="chartMaxTemp">
+            --.-
+          </span>
+          ℃
+        </div>
+
+        <div class="chart-summary-time">
+          <span id="chartMaxTime">
+            --:--
+          </span>
+        </div>
+
+      </div>
+
+
+      <div class="chart-summary-item">
+
+        <div class="chart-summary-label">
+          <span class="min-triangle">▼</span>
+          今日の最低
+        </div>
+
+        <div class="chart-summary-value">
+          <span id="chartMinTemp">
+            --.-
+          </span>
+          ℃
+        </div>
+
+        <div class="chart-summary-time">
+          <span id="chartMinTime">
+            --:--
+          </span>
+        </div>
+
+      </div>
+
     </div>
 
     <div class="chart-wrapper">
@@ -754,9 +860,7 @@
 
       if (!isNaN(maxDate.getTime())) {
 
-        document.getElementById(
-          "max_temp_time"
-        ).textContent =
+        const maxTime =
           String(
             maxDate.getHours()
           ).padStart(2, "0") +
@@ -764,6 +868,21 @@
           String(
             maxDate.getMinutes()
           ).padStart(2, "0");
+
+        document.getElementById(
+          "max_temp_time"
+        ).textContent =
+          maxTime;
+
+        document.getElementById(
+          "chartMaxTemp"
+        ).textContent =
+          data.max_temp;
+
+        document.getElementById(
+          "chartMaxTime"
+        ).textContent =
+          maxTime;
 
       }
 
@@ -783,9 +902,7 @@
 
       if (!isNaN(minDate.getTime())) {
 
-        document.getElementById(
-          "min_temp_time"
-        ).textContent =
+        const minTime =
           String(
             minDate.getHours()
           ).padStart(2, "0") +
@@ -793,6 +910,21 @@
           String(
             minDate.getMinutes()
           ).padStart(2, "0");
+
+        document.getElementById(
+          "min_temp_time"
+        ).textContent =
+          minTime;
+
+        document.getElementById(
+          "chartMinTemp"
+        ).textContent =
+          data.min_temp;
+
+        document.getElementById(
+          "chartMinTime"
+        ).textContent =
+          minTime;
 
       }
 
