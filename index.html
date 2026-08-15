@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>春日井市 Weather Station</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #f3f5f7;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+    }
+
+    /* タブ */
+
+    .tabs {
+      display: flex;
+      width: 100%;
+      height: 54px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      position: relative;
+      z-index: 10;
+    }
+
+    .tab {
+      flex: 1;
+      border: none;
+      background: white;
+      color: #777;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      color: #222;
+      background: #f3f5f7;
+      box-shadow: inset 0 -3px 0 #222;
+    }
+
+    /* ページ表示 */
+
+    .page {
+      display: none;
+      width: 100%;
+      height: calc(100vh - 54px);
+      border: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <!-- タブ -->
+
+  <div class="tabs">
+
+    <button
+      class="tab active"
+      id="outdoorTab"
+      onclick="showPage('outdoor')"
+    >
+      🌤️ 屋外
+    </button>
+
+    <button
+      class="tab"
+      id="indoorTab"
+      onclick="showPage('indoor')"
+    >
+      🏠 屋内
+    </button>
+
+  </div>
+
+
+  <!-- 屋外 -->
+
+  <iframe
+    id="outdoorPage"
+    class="page active"
+    src="outdoor.html"
+  ></iframe>
+
+
+  <!-- 屋内 -->
+
+  <iframe
+    id="indoorPage"
+    class="page"
+    src="indoor.html"
+  ></iframe>
+
+
+  <script>
+
+    function showPage(page) {
+
+      const outdoorPage =
+        document.getElementById(
+          "outdoorPage"
+        );
+
+      const indoorPage =
+        document.getElementById(
+          "indoorPage"
+        );
+
+      const outdoorTab =
+        document.getElementById(
+          "outdoorTab"
+        );
+
+      const indoorTab =
+        document.getElementById(
+          "indoorTab"
+        );
+
+
+      if (page === "outdoor") {
+
+        outdoorPage.classList.add(
+          "active"
+        );
+
+        indoorPage.classList.remove(
+          "active"
+        );
+
+        outdoorTab.classList.add(
+          "active"
+        );
+
+        indoorTab.classList.remove(
+          "active"
+        );
+
+      }
+
+
+      if (page === "indoor") {
+
+        indoorPage.classList.add(
+          "active"
+        );
+
+        outdoorPage.classList.remove(
+          "active"
+        );
+
+        indoorTab.classList.add(
+          "active"
+        );
+
+        outdoorTab.classList.remove(
+          "active"
+        );
+
+      }
+
+    }
+
+  </script>
+
+</body>
+
+</html>
