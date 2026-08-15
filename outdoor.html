@@ -16,9 +16,10 @@
 
   <style>
 
-html {
-  background: #dcefdc;
-}
+    html {
+      background: #dcefdc;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -43,6 +44,8 @@ html {
 
     header {
       margin: 4px 2px 18px;
+      position: relative;
+      padding-right: 55px;
     }
 
     h1 {
@@ -56,6 +59,82 @@ html {
       color: #777;
       font-size: 13px;
     }
+
+
+    /* ================================
+       更新ボタン
+       ================================ */
+
+    .refresh-button {
+
+      position: absolute;
+
+      top: 0;
+      right: 0;
+
+      width: 44px;
+      height: 44px;
+
+      border: none;
+
+      border-radius: 50%;
+
+      background: rgba(255,255,255,0.85);
+
+      color: #555;
+
+      font-size: 25px;
+
+      line-height: 44px;
+
+      text-align: center;
+
+      padding: 0;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 2px 7px rgba(0,0,0,0.10);
+
+      -webkit-tap-highlight-color:
+        transparent;
+
+      transition:
+        background 0.2s,
+        transform 0.2s;
+
+    }
+
+
+    .refresh-button:active {
+
+      background: #ffffff;
+
+      transform: scale(0.92);
+
+    }
+
+
+    .refresh-button.refreshing {
+
+      animation:
+        refresh-spin 0.8s linear infinite;
+
+    }
+
+
+    @keyframes refresh-spin {
+
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
+
 
     /* 観測時刻 */
 
@@ -395,7 +474,6 @@ html {
 
     /* ========================================
        タブレット・PC向けレイアウト
-       ※スマートフォンの表示は変更しない
        ======================================== */
 
     @media (min-width: 601px) {
@@ -420,8 +498,6 @@ html {
         font-size: 14px;
       }
 
-      /* 現在の気温 */
-
       .main-temperature {
         padding: 30px 20px;
         margin-bottom: 16px;
@@ -439,8 +515,6 @@ html {
         font-size: 19px;
         margin-bottom: 14px;
       }
-
-      /* 湿度・気圧 */
 
       .current-grid {
         gap: 16px;
@@ -460,15 +534,11 @@ html {
         font-size: 28px;
       }
 
-      /* セクション */
-
       .section-title {
         font-size: 18px;
         margin-top: 28px;
         margin-bottom: 12px;
       }
-
-      /* 今日 */
 
       .daily-grid {
         gap: 16px;
@@ -487,8 +557,6 @@ html {
         font-size: 13px;
       }
 
-      /* 1時間前との比較 */
-
       .comparison-card {
         padding: 20px 24px;
         border-radius: 18px;
@@ -506,8 +574,6 @@ html {
         font-size: 19px;
       }
 
-      /* 月間ランキング */
-
       .ranking-grid {
         gap: 16px;
       }
@@ -524,8 +590,6 @@ html {
       .ranking-row {
         padding: 11px 0;
       }
-
-      /* グラフ */
 
       .chart-card {
         padding: 20px;
@@ -554,27 +618,15 @@ html {
         max-width: 1100px;
       }
 
-      /*
-       * 現在値を少しワイドに
-       */
-
       .main-temperature {
         padding: 32px 24px;
       }
-
-      /*
-       * カードの余白を少し拡大
-       */
 
       .current-card,
       .daily-card,
       .ranking-card {
         padding: 22px;
       }
-
-      /*
-       * グラフを横長に
-       */
 
       .chart-wrapper {
         height: 340px;
@@ -623,6 +675,16 @@ html {
     <div class="subtitle">
       Netatmo Weather Station
     </div>
+
+    <button
+      id="refreshButton"
+      class="refresh-button"
+      type="button"
+      aria-label="最新データに更新"
+      title="最新データに更新"
+    >
+      ↻
+    </button>
 
   </header>
 
@@ -975,6 +1037,46 @@ html {
 
 <script>
 
+
+  /* ================================
+     手動更新ボタン
+     ================================ */
+
+  document
+    .getElementById("refreshButton")
+    .addEventListener(
+      "click",
+      function() {
+
+        const button =
+          document.getElementById(
+            "refreshButton"
+          );
+
+
+        button.classList.add(
+          "refreshing"
+        );
+
+
+        /*
+         * 少しだけ回転表示を見せてから
+         * ページを再読み込み
+         */
+
+        setTimeout(
+          function() {
+
+            location.reload();
+
+          },
+          300
+        );
+
+      }
+    );
+
+
   /*
    * 10分ごとにページを自動更新
    */
@@ -1040,7 +1142,6 @@ html {
 
     /*
      * 今日の最高・最低
-     * 必ず小数1桁
      */
 
     document.getElementById(
@@ -1160,10 +1261,6 @@ html {
     }
 
 
-    /*
-     * 日時をDateへ変換
-     */
-
     function parseJST(
       value
     ) {
@@ -1182,10 +1279,6 @@ html {
     const now =
       Date.now();
 
-
-    /*
-     * 過去24時間
-     */
 
     const cutoff =
       now -
@@ -1207,10 +1300,6 @@ html {
 
       });
 
-
-    /*
-     * グラフの時刻
-     */
 
     const labels =
       graphHistory.map(
@@ -1377,13 +1466,6 @@ html {
     });
 
 
-    /*
-     * 1時間前のデータが近い場合のみ使用
-     *
-     * historyは10分間隔なので、
-     * 通常は1時間前のデータが存在する。
-     */
-
     if (
       closest &&
       currentData &&
@@ -1427,10 +1509,6 @@ html {
         );
 
 
-      /*
-       * 1時間前の気温
-       */
-
       if (
         !isNaN(
           oneHourAgoTemperature
@@ -1447,10 +1525,6 @@ html {
 
       }
 
-
-      /*
-       * 気温差
-       */
 
       if (
         !isNaN(
@@ -1484,10 +1558,6 @@ html {
       }
 
 
-      /*
-       * 湿度差
-       */
-
       if (
         !isNaN(
           currentHumidity
@@ -1519,10 +1589,6 @@ html {
 
       }
 
-
-      /*
-       * 気圧差
-       */
 
       if (
         !isNaN(
@@ -1559,9 +1625,7 @@ html {
 
 
     /*
-     * ========================================
      * 今日・昨日の気温比較グラフ
-     * ========================================
      */
 
     const today =
@@ -1599,10 +1663,6 @@ html {
       ).padStart(2, "0");
 
 
-    /*
-     * 今日のデータ
-     */
-
     const todayHistory =
       history.filter(
         item =>
@@ -1612,10 +1672,6 @@ html {
       );
 
 
-    /*
-     * 昨日のデータ
-     */
-
     const yesterdayHistory =
       history.filter(
         item =>
@@ -1624,10 +1680,6 @@ html {
           )
       );
 
-
-    /*
-     * 今日のデータを時刻でMap化
-     */
 
     const yesterdayMap =
       new Map();
@@ -1656,10 +1708,6 @@ html {
       }
     );
 
-
-    /*
-     * 今日の時刻を基準に比較
-     */
 
     const comparisonLabels = [];
 
@@ -1700,10 +1748,6 @@ html {
         );
 
 
-        /*
-         * 同じ時刻の昨日の値
-         */
-
         if (
           yesterdayMap.has(
             time
@@ -1718,11 +1762,6 @@ html {
 
         } else {
 
-          /*
-           * 完全一致する時刻がない場合は
-           * nullとして空白にする
-           */
-
           yesterdayTemperatures.push(
             null
           );
@@ -1732,10 +1771,6 @@ html {
       }
     );
 
-
-    /*
-     * 比較グラフ
-     */
 
     if (
       comparisonLabels.length > 0
@@ -1877,9 +1912,6 @@ html {
 
   /*
    * daily.json
-   *
-   * 今日の最高・最低気温の発生時刻
-   * ＋月間ランキング
    */
 
   fetch(
@@ -1913,10 +1945,6 @@ html {
     }
 
 
-    /*
-     * 今日の日付
-     */
-
     const today =
       new Date();
 
@@ -1933,10 +1961,6 @@ html {
       ).padStart(2, "0");
 
 
-    /*
-     * 今日のデータ
-     */
-
     const todayData =
       daily.find(
         item =>
@@ -1944,10 +1968,6 @@ html {
           todayString
       );
 
-
-    /*
-     * 時刻をHH:MMに変換
-     */
 
     function formatTime(
       value
@@ -1976,10 +1996,6 @@ html {
     }
 
 
-    /*
-     * 今日の最高気温時刻
-     */
-
     if (
       todayData &&
       todayData.max_temp_time
@@ -1994,10 +2010,6 @@ html {
 
     }
 
-
-    /*
-     * 今日の最低気温時刻
-     */
 
     if (
       todayData &&
@@ -2014,10 +2026,6 @@ html {
     }
 
 
-    /*
-     * 現在の年月
-     */
-
     const year =
       today.getFullYear();
 
@@ -2030,10 +2038,6 @@ html {
     ).textContent =
       month + "月";
 
-
-    /*
-     * 今月のデータ
-     */
 
     const prefix =
       year +
@@ -2053,10 +2057,6 @@ html {
           )
       );
 
-
-    /*
-     * 最高気温ランキング
-     */
 
     const maxRanking =
       monthly
@@ -2079,10 +2079,6 @@ html {
 
         .slice(0, 3);
 
-
-    /*
-     * 最低気温ランキング
-     */
 
     const minRanking =
       monthly
