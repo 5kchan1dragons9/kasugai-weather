@@ -125,6 +125,15 @@
       margin-top: 2px;
     }
 
+    /* 気圧変化 */
+
+    .pressure-trend {
+      margin-top: 7px;
+      font-size: 12px;
+      color: #777;
+      font-weight: 600;
+    }
+
     /* セクションタイトル */
 
     .section-title {
@@ -159,8 +168,6 @@
       font-size: 23px;
       font-weight: 700;
     }
-
-    /* 最高・最低気温の発生時刻 */
 
     .daily-card .time {
       color: #777;
@@ -470,6 +477,13 @@
 
       <div class="unit">
         気圧
+      </div>
+
+      <div
+        class="pressure-trend"
+        id="pressureTrend"
+      >
+        3時間の変化：--
       </div>
 
     </div>
@@ -1105,6 +1119,135 @@
         Math.min(
           ...temperatures
         ).toFixed(1);
+
+    }
+
+
+    /*
+     * 3時間前との気圧差
+     */
+
+    if (currentData) {
+
+      const currentPressure =
+        parseFloat(
+          currentData.pressure
+        );
+
+      const targetTime =
+        now -
+        3 * 60 * 60 * 1000;
+
+      let closestPressure = null;
+
+      let closestPressureDifference =
+        Infinity;
+
+      history.forEach(item => {
+
+        const itemTime =
+          new Date(
+            item.time.replace(
+              " ",
+              "T"
+            ) +
+            ":00+09:00"
+          );
+
+        const itemPressure =
+          parseFloat(
+            item.pressure
+          );
+
+        if (
+          isNaN(
+            itemTime.getTime()
+          ) ||
+          isNaN(
+            itemPressure
+          )
+        ) {
+          return;
+        }
+
+        const difference =
+          Math.abs(
+            itemTime.getTime() -
+            targetTime
+          );
+
+        if (
+          difference <
+          closestPressureDifference
+        ) {
+
+          closestPressureDifference =
+            difference;
+
+          closestPressure =
+            itemPressure;
+
+        }
+
+      });
+
+
+      if (
+        !isNaN(
+          currentPressure
+        ) &&
+        closestPressure !== null
+      ) {
+
+        const pressureDifference =
+          currentPressure -
+          closestPressure;
+
+
+        let arrow = "→";
+
+
+        /*
+         * 0.1hPa未満は
+         * ほぼ変化なしとして扱う
+         */
+
+        if (
+          pressureDifference >
+          0.05
+        ) {
+
+          arrow = "↗";
+
+        }
+        else if (
+          pressureDifference <
+          -0.05
+        ) {
+
+          arrow = "↘";
+
+        }
+
+
+        const sign =
+          pressureDifference > 0
+            ? "+"
+            : "";
+
+
+        document.getElementById(
+          "pressureTrend"
+        ).textContent =
+          arrow +
+          " 3時間で " +
+          sign +
+          pressureDifference.toFixed(
+            1
+          ) +
+          " hPa";
+
+      }
 
     }
 
