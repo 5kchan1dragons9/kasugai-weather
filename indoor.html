@@ -603,8 +603,6 @@
           ---
         </span>
 
-        dB
-
       </div>
 
       <div class="unit">
@@ -885,18 +883,30 @@
 
 
     if (
-      data.noise !== null &&
-      data.noise !== undefined
-    ) {
+  data.noise !== null &&
+  data.noise !== undefined
+) {
 
-      document.getElementById(
-        "noise"
-      ).textContent =
-        parseFloat(
-          data.noise
-        ).toFixed(0);
+  const noise =
+    parseFloat(data.noise);
 
-    }
+  if (noise === 37) {
+
+    document.getElementById(
+      "noise"
+    ).textContent =
+      "37dB（就寝or外出中）";
+
+  } else {
+
+    document.getElementById(
+      "noise"
+    ).textContent =
+      noise.toFixed(0) + "dB";
+
+  }
+
+}
 
 
     if (
