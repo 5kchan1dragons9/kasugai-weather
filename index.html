@@ -55,6 +55,7 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .tab.active {
@@ -126,6 +127,10 @@
 
   <script>
 
+    /*
+     * 屋外・屋内の切り替え
+     */
+
     function showPage(page) {
 
       const outdoorPage =
@@ -191,6 +196,127 @@
       }
 
     }
+
+
+    /*
+     * スワイプによる切り替え
+     */
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const SWIPE_THRESHOLD = 60;
+
+
+    document.addEventListener(
+      "touchstart",
+      function(event) {
+
+        const touch =
+          event.changedTouches[0];
+
+        touchStartX =
+          touch.screenX;
+
+        touchStartY =
+          touch.screenY;
+
+      },
+      {
+        passive: true
+      }
+    );
+
+
+    document.addEventListener(
+      "touchend",
+      function(event) {
+
+        const touch =
+          event.changedTouches[0];
+
+        const touchEndX =
+          touch.screenX;
+
+        const touchEndY =
+          touch.screenY;
+
+
+        const diffX =
+          touchEndX - touchStartX;
+
+        const diffY =
+          touchEndY - touchStartY;
+
+
+        /*
+         * 縦方向の操作が大きい場合は
+         * スワイプとして扱わない
+         */
+
+        if (
+          Math.abs(diffY) >
+          Math.abs(diffX)
+        ) {
+          return;
+        }
+
+
+        /*
+         * 短い操作は無視
+         */
+
+        if (
+          Math.abs(diffX) <
+          SWIPE_THRESHOLD
+        ) {
+          return;
+        }
+
+
+        /*
+         * 現在表示しているページを確認
+         */
+
+        const outdoorPage =
+          document.getElementById(
+            "outdoorPage"
+          );
+
+        const isOutdoor =
+          outdoorPage.classList.contains(
+            "active"
+          );
+
+
+        /*
+         * 左スワイプ
+         * 屋外 → 屋内
+         */
+
+        if (diffX < 0 && isOutdoor) {
+
+          showPage("indoor");
+
+        }
+
+
+        /*
+         * 右スワイプ
+         * 屋内 → 屋外
+         */
+
+        if (diffX > 0 && !isOutdoor) {
+
+          showPage("outdoor");
+
+        }
+
+      },
+      {
+        passive: true
+      }
+    );
 
   </script>
 
