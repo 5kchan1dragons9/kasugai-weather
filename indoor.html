@@ -15,10 +15,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    
-html {
-  background: #dcebf5;
-}
+
+    html {
+      background: #dcebf5;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -55,6 +56,51 @@ html {
       margin-top: 5px;
       color: #777;
       font-size: 13px;
+    }
+
+    /* ================================
+       手動更新ボタン
+       ================================ */
+
+    .refresh-button {
+
+      position: fixed;
+
+      top: 10px;
+      right: 10px;
+
+      width: 34px;
+      height: 34px;
+
+      border: none;
+      border-radius: 50%;
+
+      background: rgba(255,255,255,0.75);
+
+      color: #666;
+
+      font-size: 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.12);
+
+      cursor: pointer;
+
+      z-index: 9999;
+
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .refresh-button:active {
+
+      transform: scale(0.92);
+
+      background: rgba(255,255,255,0.95);
+
     }
 
     /* 観測時刻 */
@@ -463,6 +509,20 @@ html {
 
 <body>
 
+
+<!-- ================================
+     手動更新ボタン
+     ================================ -->
+
+<button
+  class="refresh-button"
+  onclick="location.reload()"
+  aria-label="データを更新"
+>
+  ↻
+</button>
+
+
 <div class="container">
 
   <header>
@@ -811,6 +871,7 @@ html {
 
 <script>
 
+
   /*
    * 10分ごとにページを自動更新
    */
@@ -886,30 +947,30 @@ html {
 
 
     if (
-  data.noise !== null &&
-  data.noise !== undefined
-) {
+      data.noise !== null &&
+      data.noise !== undefined
+    ) {
 
-  const noise =
-    parseFloat(data.noise);
+      const noise =
+        parseFloat(data.noise);
 
-  if (noise === 37) {
+      if (noise === 37) {
 
-    document.getElementById(
-      "noise"
-    ).textContent =
-      "37dB（就寝or外出中）";
+        document.getElementById(
+          "noise"
+        ).textContent =
+          "37dB（就寝or外出中）";
 
-  } else {
+      } else {
 
-    document.getElementById(
-      "noise"
-    ).textContent =
-      noise.toFixed(0) + "dB";
+        document.getElementById(
+          "noise"
+        ).textContent =
+          noise.toFixed(0) + "dB";
 
-  }
+      }
 
-}
+    }
 
 
     if (
