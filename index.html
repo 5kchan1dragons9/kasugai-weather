@@ -160,6 +160,14 @@
       font-weight: 700;
     }
 
+    /* 最高・最低気温の発生時刻 */
+
+    .daily-card .time {
+      color: #777;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
     /* 過去24時間 */
 
     .history-grid {
@@ -440,6 +448,14 @@
 
       </div>
 
+      <div class="time">
+
+        <span id="max_temp_time">
+          --:--
+        </span>
+
+      </div>
+
     </div>
 
 
@@ -456,6 +472,14 @@
         </span>
 
         ℃
+
+      </div>
+
+      <div class="time">
+
+        <span id="min_temp_time">
+          --:--
+        </span>
 
       </div>
 
@@ -711,6 +735,68 @@
       "min_temp"
     ).textContent =
       data.min_temp;
+
+
+    /*
+     * 最高・最低気温の発生時刻
+     */
+
+    if (data.date_max_temp) {
+
+      const maxDate =
+        new Date(
+          data.date_max_temp.replace(
+            " ",
+            "T"
+          ) +
+          ":00+09:00"
+        );
+
+      if (!isNaN(maxDate.getTime())) {
+
+        document.getElementById(
+          "max_temp_time"
+        ).textContent =
+          String(
+            maxDate.getHours()
+          ).padStart(2, "0") +
+          ":" +
+          String(
+            maxDate.getMinutes()
+          ).padStart(2, "0");
+
+      }
+
+    }
+
+
+    if (data.date_min_temp) {
+
+      const minDate =
+        new Date(
+          data.date_min_temp.replace(
+            " ",
+            "T"
+          ) +
+          ":00+09:00"
+        );
+
+      if (!isNaN(minDate.getTime())) {
+
+        document.getElementById(
+          "min_temp_time"
+        ).textContent =
+          String(
+            minDate.getHours()
+          ).padStart(2, "0") +
+          ":" +
+          String(
+            minDate.getMinutes()
+          ).padStart(2, "0");
+
+      }
+
+    }
 
 
     /*
