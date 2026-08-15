@@ -902,74 +902,6 @@
 
     }
 
-
-    /*
-     * 最高・最低気温の発生時刻
-     */
-
-    function formatTemperatureTime(
-      value
-    ) {
-
-      if (!value) {
-        return "--:--";
-      }
-
-
-      const date =
-        new Date(
-          value.replace(
-            " ",
-            "T"
-          ) +
-          ":00+09:00"
-        );
-
-
-      if (
-        isNaN(
-          date.getTime()
-        )
-      ) {
-
-        return "--:--";
-
-      }
-
-
-      return (
-        String(
-          date.getHours()
-        ).padStart(2, "0") +
-        ":" +
-        String(
-          date.getMinutes()
-        ).padStart(2, "0"
-        )
-      );
-
-    }
-
-
-    document.getElementById(
-      "maxTempTime"
-    ).textContent =
-      data.date_max_temp
-        ? formatTemperatureTime(
-            data.date_max_temp
-          )
-        : "--:--";
-
-
-    document.getElementById(
-      "minTempTime"
-    ).textContent =
-      data.date_min_temp
-        ? formatTemperatureTime(
-            data.date_min_temp
-          )
-        : "--:--";
-
   })
 
   .catch(error => {
@@ -1594,7 +1526,10 @@
 
 
   /*
-   * 月間ランキング
+   * daily.json
+   *
+   * 今日の最高・最低気温の発生時刻
+   * ＋月間ランキング
    */
 
   fetch(
@@ -1629,17 +1564,115 @@
 
 
     /*
+     * 今日の日付
+     */
+
+    const today =
+      new Date();
+
+
+    const todayString =
+      today.getFullYear() +
+      "-" +
+      String(
+        today.getMonth() + 1
+      ).padStart(2, "0") +
+      "-" +
+      String(
+        today.getDate()
+      ).padStart(2, "0");
+
+
+    /*
+     * 今日のデータ
+     */
+
+    const todayData =
+      daily.find(
+        item =>
+          item.date ===
+          todayString
+      );
+
+
+    /*
+     * 時刻を HH:MM に変換
+     */
+
+    function formatTime(
+      value
+    ) {
+
+      if (!value) {
+        return "--:--";
+      }
+
+
+      const parts =
+        value.split(" ");
+
+
+      if (
+        parts.length < 2
+      ) {
+
+        return "--:--";
+
+      }
+
+
+      return parts[1];
+
+    }
+
+
+    /*
+     * 今日の最高気温時刻
+     */
+
+    if (
+      todayData &&
+      todayData.max_temp_time
+    ) {
+
+      document.getElementById(
+        "maxTempTime"
+      ).textContent =
+        formatTime(
+          todayData.max_temp_time
+        );
+
+    }
+
+
+    /*
+     * 今日の最低気温時刻
+     */
+
+    if (
+      todayData &&
+      todayData.min_temp_time
+    ) {
+
+      document.getElementById(
+        "minTempTime"
+      ).textContent =
+        formatTime(
+          todayData.min_temp_time
+        );
+
+    }
+
+
+    /*
      * 現在の年月
      */
 
-    const now =
-      new Date();
-
     const year =
-      now.getFullYear();
+      today.getFullYear();
 
     const month =
-      now.getMonth() + 1;
+      today.getMonth() + 1;
 
 
     document.getElementById(
@@ -1662,11 +1695,12 @@
 
 
     const monthly =
-      daily.filter(item =>
-        item.date &&
-        item.date.startsWith(
-          prefix
-        )
+      daily.filter(
+        item =>
+          item.date &&
+          item.date.startsWith(
+            prefix
+          )
       );
 
 
@@ -1677,9 +1711,10 @@
     const maxRanking =
       monthly
 
-        .filter(item =>
-          item.max_temp !== null &&
-          item.max_temp !== undefined
+        .filter(
+          item =>
+            item.max_temp !== null &&
+            item.max_temp !== undefined
         )
 
         .sort(
@@ -1702,9 +1737,10 @@
     const minRanking =
       monthly
 
-        .filter(item =>
-          item.min_temp !== null &&
-          item.min_temp !== undefined
+        .filter(
+          item =>
+            item.min_temp !== null &&
+            item.min_temp !== undefined
         )
 
         .sort(
@@ -1730,9 +1766,15 @@
         );
 
       return (
-        parseInt(parts[1], 10) +
+        parseInt(
+          parts[1],
+          10
+        ) +
         "月" +
-        parseInt(parts[2], 10) +
+        parseInt(
+          parts[2],
+          10
+        ) +
         "日"
       );
 
@@ -1853,7 +1895,7 @@
   .catch(error => {
 
     console.error(
-      "月間ランキング取得エラー:",
+      "daily.json取得エラー:",
       error
     );
 
