@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>春日井市の気象（屋内）</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 14px;
+      background: #f3f5f7;
+      color: #222;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin: 4px 2px 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 27px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin-top: 5px;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .observation-time {
+      font-size: 18px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .observation-time span {
+      font-weight: 700;
+      color: #222;
+    }
+
+    .main-temperature {
+      background: white;
+      border-radius: 20px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .main-temperature .label {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .main-temperature .temperature {
+      font-size: 64px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: -2px;
+    }
+
+    .main-temperature .unit {
+      font-size: 20px;
+      margin-left: 3px;
+      font-weight: 500;
+    }
+
+    .current-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .current-card {
+      background: white;
+      border-radius: 16px;
+      padding: 17px;
+      text-align: center;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.07);
+    }
+
+    .current-card .icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .current-card .value {
+      font-size: 25px;
+      font-weight: 700;
+    }
+
+    .current-card .unit {
+      color: #777;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .temp-high {
+      color: #d94b4b;
+    }
+
+    .temp-low {
+      color: #2878d0;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 24px 3px 10px;
+    }
+
+    .daily-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .daily-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.07);
+    }
+
+    .daily-card .label {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .daily-card .value {
+      font-size: 23px;
+      font-weight: 700;
+    }
+
+    .daily-card .time {
+      margin-top: 5px;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .comparison-card {
+      background: white;
+      border-radius: 16px;
+      padding: 17px;
+      margin-top: 12px;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.07);
+    }
+
+    .comparison-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .comparison-row:last-child {
+      border-bottom: none;
+    }
+
+    .comparison-row span {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .comparison-row strong {
+      font-size: 18px;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 14px;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.07);
+    }
+
+    .chart-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 270px;
+    }
+
+    .update-info {
+      text-align: center;
+      color: #777;
+      font-size: 12px;
+      margin: 22px 0 8px;
+    }
+
+    .error-message {
+      display: none;
+      background: #fff0f0;
+      color: #c33;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .main-temperature {
+        padding: 23px 15px;
+      }
+
+      .main-temperature .temperature {
+        font-size: 58px;
+      }
+
+      .observation-time {
+        font-size: 17px;
+      }
+
+      .current-card {
+        padding: 15px 8px;
+      }
+
+      .current-card .value {
+        font-size: 22px;
+      }
+
+      .chart-wrapper {
+        height: 240px;
+      }
+
+    }
+
+    @media (min-width: 601px) {
+
+      body {
+        padding: 24px;
+      }
+
+      .container {
+        max-width: 1050px;
+      }
+
+      header {
+        margin: 6px 4px 24px;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .main-temperature {
+        padding: 30px 20px;
+        margin-bottom: 16px;
+      }
+
+      .main-temperature .temperature {
+        font-size: 72px;
+      }
+
+      .main-temperature .label {
+        font-size: 16px;
+      }
+
+      .observation-time {
+        font-size: 19px;
+        margin-bottom: 14px;
+      }
+
+      .current-grid {
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .current-card {
+        padding: 22px;
+        border-radius: 18px;
+      }
+
+      .current-card .icon {
+        font-size: 26px;
+      }
+
+      .current-card .value {
+        font-size: 28px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        margin-top: 28px;
+        margin-bottom: 12px;
+      }
+
+      .daily-grid {
+        gap: 16px;
+      }
+
+      .daily-card {
+        padding: 20px;
+        border-radius: 18px;
+      }
+
+      .daily-card .value {
+        font-size: 26px;
+      }
+
+      .comparison-card {
+        padding: 20px 24px;
+        border-radius: 18px;
+      }
+
+      .comparison-row {
+        padding: 11px 0;
+      }
+
+      .comparison-row span {
+        font-size: 15px;
+      }
+
+      .comparison-row strong {
+        font-size: 19px;
+      }
+
+      .chart-card {
+        padding: 20px;
+        margin-top: 16px;
+        border-radius: 18px;
+      }
+
+      .chart-title {
+        font-size: 18px;
+      }
+
+      .chart-wrapper {
+        height: 320px;
+      }
+
+    }
+
+    @media (min-width: 900px) {
+
+      .container {
+        max-width: 1100px;
+      }
+
+      .main-temperature {
+        padding: 32px 24px;
+      }
+
+      .current-card {
+        padding: 22px;
+      }
+
+      .chart-wrapper {
+        height: 340px;
+      }
+
+    }
+
+    @media (min-width: 1200px) {
+
+      body {
+        padding: 30px;
+      }
+
+      .container {
+        max-width: 1150px;
+      }
+
+      .main-temperature .temperature {
+        font-size: 76px;
+      }
+
+      .chart-wrapper {
+        height: 360px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+  <header>
+
+    <h1>🏠リビング（屋内）のデータ</h1>
+
+    <div class="subtitle">
+      Netatmo Weather Station
+    </div>
+
+  </header>
+
+
+  <div
+    id="errorMessage"
+    class="error-message"
+  >
+    屋内の気象データを取得できませんでした。
+  </div>
+
+
+  <!-- 現在の気温 -->
+
+  <div class="main-temperature">
+
+    <div class="observation-time">
+
+      <span id="observationDate">
+        --月--日
+      </span>
+
+      <span id="observationTime">
+        --:--
+      </span>
+
+      現在
+
+    </div>
+
+    <div class="label">
+      現在の気温
+    </div>
+
+    <div class="temperature">
+
+      <span id="temperature">
+        --.-
+      </span>
+
+      <span class="unit">
+        ℃
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- 屋内データ -->
+
+  <div class="current-grid">
+
+    <div class="current-card">
+
+      <div class="icon">
+        💧
+      </div>
+
+      <div class="value">
+
+        <span id="humidity">
+          --
+        </span>
+
+        %
+
+      </div>
+
+      <div class="unit">
+        湿度
+      </div>
+
+    </div>
+
+
+    <div class="current-card">
+
+      <div class="icon">
+        🫁
+      </div>
+
+      <div class="value">
+
+        <span id="co2">
+          ---
+        </span>
+
+        ppm
+
+      </div>
+
+      <div class="unit">
+        CO₂
+      </div>
+
+    </div>
+
+
+    <div class="current-card">
+
+      <div class="icon">
+        🧭
+      </div>
+
+      <div class="value">
+
+        <span id="pressure">
+          ----.-
+        </span>
+
+        hPa
+
+      </div>
+
+      <div class="unit">
+        気圧
+      </div>
+
+    </div>
+
+
+    <div class="current-card">
+
+      <div class="icon">
+        🔊
+      </div>
+
+      <div class="value">
+
+        <span id="noise">
+          --
+        </span>
+
+        dB
+
+      </div>
+
+      <div class="unit">
+        騒音
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 今日 -->
+
+  <div class="section-title">
+    📅 今日
+  </div>
+
+  <div class="daily-grid">
+
+    <div class="daily-card">
+
+      <div class="label">
+        <span class="temp-high">🔺</span>
+        最高気温
+      </div>
+
+      <div class="value">
+
+        <span
+          id="max_temp"
+          class="temp-high"
+        >
+          --.-
+        </span>
+
+        ℃
+
+      </div>
+
+      <div
+        class="time"
+        id="maxTempTime"
+      >
+        --:--
+      </div>
+
+    </div>
+
+
+    <div class="daily-card">
+
+      <div class="label">
+        <span class="temp-low">▼</span>
+        最低気温
+      </div>
+
+      <div class="value">
+
+        <span
+          id="min_temp"
+          class="temp-low"
+        >
+          --.-
+        </span>
+
+        ℃
+
+      </div>
+
+      <div
+        class="time"
+        id="minTempTime"
+      >
+        --:--
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 1時間前との比較 -->
+
+  <div class="section-title">
+    🕐 1時間前との比較
+  </div>
+
+  <div class="comparison-card">
+
+    <div class="comparison-row">
+
+      <span>
+        1時間前の気温
+      </span>
+
+      <strong id="previousTemperature">
+        --.-℃
+      </strong>
+
+    </div>
+
+
+    <div class="comparison-row">
+
+      <span>
+        気温差
+      </span>
+
+      <strong id="temperatureDifference">
+        --.-℃
+      </strong>
+
+    </div>
+
+
+    <div class="comparison-row">
+
+      <span>
+        湿度差
+      </span>
+
+      <strong id="humidityDifference">
+        --%
+      </strong>
+
+    </div>
+
+
+    <div class="comparison-row">
+
+      <span>
+        CO₂差
+      </span>
+
+      <strong id="co2Difference">
+        -- ppm
+      </strong>
+
+    </div>
+
+
+    <div class="comparison-row">
+
+      <span>
+        気圧差
+      </span>
+
+      <strong id="pressureDifference">
+        --.-hPa
+      </strong>
+
+    </div>
+
+
+    <div class="comparison-row">
+
+      <span>
+        騒音差
+      </span>
+
+      <strong id="noiseDifference">
+        -- dB
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- 気温 -->
+
+  <div class="chart-card">
+
+    <div class="chart-title">
+      🌡️ 屋内の気温（24時間）
+    </div>
+
+    <div class="chart-wrapper">
+
+      <canvas id="temperatureChart"></canvas>
+
+    </div>
+
+  </div>
+
+
+  <!-- CO2 -->
+
+  <div class="chart-card">
+
+    <div class="chart-title">
+      🫁 CO₂（24時間）
+    </div>
+
+    <div class="chart-wrapper">
+
+      <canvas id="co2Chart"></canvas>
+
+    </div>
+
+  </div>
+
+
+  <div class="update-info">
+
+    データ取得：
+    <span id="updated">
+      --:--
+    </span>
+
+  </div>
+
+
+</div>
+
+
+<script>
+
+  /*
+   * 10分ごとにページ更新
+   */
+
+  setTimeout(
+    () => location.reload(),
+    10 * 60 * 1000
+  );
+
+
+  /*
+   * 現在データ
+   */
+
+  let currentData = null;
+
+
+  fetch(
+    "indoor-data.json?cache=" +
+    Date.now()
+  )
+
+  .then(response => {
+
+    if (!response.ok) {
+      throw new Error(
+        "indoor-data.json error"
+      );
+    }
+
+    return response.json();
+
+  })
+
+  .then(data => {
+
+    currentData = data;
+
+
+    /*
+     * 気温
+     */
+
+    if (
+      data.temperature !== null &&
+      data.temperature !== undefined
+    ) {
+
+      document.getElementById(
+        "temperature"
+      ).textContent =
+        parseFloat(
+          data.temperature
+        ).toFixed(1);
+
+    }
+
+
+    /*
+     * 湿度
+     */
+
+    if (
+      data.humidity !== null &&
+      data.humidity !== undefined
+    ) {
+
+      document.getElementById(
+        "humidity"
+      ).textContent =
+        data.humidity;
+
+    }
+
+
+    /*
+     * 気圧
+     */
+
+    if (
+      data.pressure !== null &&
+      data.pressure !== undefined
+    ) {
+
+      document.getElementById(
+        "pressure"
+      ).textContent =
+        parseFloat(
+          data.pressure
+        ).toFixed(1);
+
+    }
+
+
+    /*
+     * CO2
+     */
+
+    if (
+      data.co2 !== null &&
+      data.co2 !== undefined
+    ) {
+
+      document.getElementById(
+        "co2"
+      ).textContent =
+        Math.round(
+          parseFloat(data.co2)
+        );
+
+    }
+
+
+    /*
+     * 騒音
+     */
+
+    if (
+      data.noise !== null &&
+      data.noise !== undefined
+    ) {
+
+      document.getElementById(
+        "noise"
+      ).textContent =
+        parseFloat(
+          data.noise
+        ).toFixed(0);
+
+    }
+
+
+    /*
+     * 今日の最高・最低
+     */
+
+    if (
+      data.max_temp !== null &&
+      data.max_temp !== undefined
+    ) {
+
+      document.getElementById(
+        "max_temp"
+      ).textContent =
+        parseFloat(
+          data.max_temp
+        ).toFixed(1);
+
+    }
+
+
+    if (
+      data.min_temp !== null &&
+      data.min_temp !== undefined
+    ) {
+
+      document.getElementById(
+        "min_temp"
+      ).textContent =
+        parseFloat(
+          data.min_temp
+        ).toFixed(1);
+
+    }
+
+
+    /*
+     * 更新時刻
+     */
+
+    document.getElementById(
+      "updated"
+    ).textContent =
+      data.updated;
+
+
+    /*
+     * 観測日時
+     */
+
+    const updatedDate =
+      new Date(
+        data.updated.replace(
+          " ",
+          "T"
+        ) +
+        ":00+09:00"
+      );
+
+
+    if (
+      !isNaN(
+        updatedDate.getTime()
+      )
+    ) {
+
+      document.getElementById(
+        "observationDate"
+      ).textContent =
+        (
+          updatedDate.getMonth() + 1
+        ) +
+        "月" +
+        updatedDate.getDate() +
+        "日";
+
+
+      document.getElementById(
+        "observationTime"
+      ).textContent =
+        String(
+          updatedDate.getHours()
+        ).padStart(2, "0") +
+        ":" +
+        String(
+          updatedDate.getMinutes()
+        ).padStart(2, "0");
+
+    }
+
+  })
+
+  .catch(error => {
+
+    console.error(
+      "屋内データ取得エラー:",
+      error
+    );
+
+    document.getElementById(
+      "errorMessage"
+    ).style.display =
+      "block";
+
+  });
+
+
+  /*
+   * 屋内履歴
+   */
+
+  fetch(
+    "indoor-history.json?cache=" +
+    Date.now()
+  )
+
+  .then(response => {
+
+    if (!response.ok) {
+      throw new Error(
+        "indoor-history.json error"
+      );
+    }
+
+    return response.json();
+
+  })
+
+  .then(history => {
+
+    if (
+      !history ||
+      history.length === 0
+    ) {
+
+      return;
+
+    }
+
+
+    /*
+     * JST日時変換
+     */
+
+    function parseJST(value) {
+
+      return new Date(
+        value.replace(
+          " ",
+          "T"
+        ) +
+        ":00+09:00"
+      );
+
+    }
+
+
+    /*
+     * 過去24時間
+     */
+
+    const cutoff =
+      Date.now() -
+      24 * 60 * 60 * 1000;
+
+
+    const graphHistory =
+      history.filter(item => {
+
+        const time =
+          parseJST(
+            item.time
+          );
+
+        return (
+          time.getTime() >= cutoff
+        );
+
+      });
+
+
+    const labels =
+      graphHistory.map(item => {
+
+        const parts =
+          item.time.split(" ");
+
+        return parts[1];
+
+      });
+
+
+    /*
+     * 気温グラフ
+     */
+
+    new Chart(
+
+      document.getElementById(
+        "temperatureChart"
+      ),
+
+      {
+
+        type: "line",
+
+        data: {
+
+          labels: labels,
+
+          datasets: [
+
+            {
+
+              label: "気温",
+
+              data:
+                graphHistory.map(
+                  item =>
+                    item.temperature === null
+                      ? null
+                      : parseFloat(
+                          item.temperature
+                        )
+                ),
+
+              tension: 0.25,
+
+              pointRadius: 1,
+
+              pointHoverRadius: 5,
+
+              fill: false
+
+            }
+
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          interaction: {
+
+            mode: "index",
+
+            intersect: false
+
+          },
+
+          plugins: {
+
+            legend: {
+              display: false
+            }
+
+          },
+
+          scales: {
+
+            x: {
+
+              ticks: {
+                maxTicksLimit: 8,
+                autoSkip: true
+              }
+
+            },
+
+            y: {
+
+              title: {
+                display: true,
+                text: "℃"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    );
+
+
+    /*
+     * CO2グラフ
+     */
+
+    new Chart(
+
+      document.getElementById(
+        "co2Chart"
+      ),
+
+      {
+
+        type: "line",
+
+        data: {
+
+          labels: labels,
+
+          datasets: [
+
+            {
+
+              label: "CO₂",
+
+              data:
+                graphHistory.map(
+                  item =>
+                    item.co2 === null
+                      ? null
+                      : parseFloat(
+                          item.co2
+                        )
+                ),
+
+              tension: 0.25,
+
+              pointRadius: 1,
+
+              pointHoverRadius: 5,
+
+              fill: false
+
+            }
+
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          interaction: {
+
+            mode: "index",
+
+            intersect: false
+
+          },
+
+          plugins: {
+
+            legend: {
+              display: false
+            }
+
+          },
+
+          scales: {
+
+            x: {
+
+              ticks: {
+                maxTicksLimit: 8,
+                autoSkip: true
+              }
+
+            },
+
+            y: {
+
+              title: {
+                display: true,
+                text: "ppm"
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    );
+
+
+    /*
+     * 1時間前との比較
+     */
+
+    const targetTime =
+      Date.now() -
+      60 * 60 * 1000;
+
+
+    let closest = null;
+
+    let closestDifference =
+      Infinity;
+
+
+    history.forEach(item => {
+
+      const itemTime =
+        parseJST(
+          item.time
+        );
+
+
+      const difference =
+        Math.abs(
+          itemTime.getTime() -
+          targetTime
+        );
+
+
+      if (
+        difference <
+        closestDifference
+      ) {
+
+        closestDifference =
+          difference;
+
+        closest =
+          item;
+
+      }
+
+    });
+
+
+    if (
+      closest &&
+      currentData
+    ) {
+
+
+      /*
+       * 気温
+       */
+
+      const currentTemperature =
+        parseFloat(
+          currentData.temperature
+        );
+
+      const previousTemperature =
+        parseFloat(
+          closest.temperature
+        );
+
+
+      if (
+        !isNaN(
+          currentTemperature
+        ) &&
+        !isNaN(
+          previousTemperature
+        )
+      ) {
+
+        const difference =
+          currentTemperature -
+          previousTemperature;
+
+
+        document.getElementById(
+          "previousTemperature"
+        ).textContent =
+          previousTemperature.toFixed(
+            1
+          ) +
+          "℃";
+
+
+        document.getElementById(
+          "temperatureDifference"
+        ).textContent =
+          (
+            difference > 0
+              ? "+"
+              : ""
+          ) +
+          difference.toFixed(
+            1
+          ) +
+          "℃";
+
+      }
+
+
+      /*
+       * 湿度
+       */
+
+      const currentHumidity =
+        parseFloat(
+          currentData.humidity
+        );
+
+      const previousHumidity =
+        parseFloat(
+          closest.humidity
+        );
+
+
+      if (
+        !isNaN(
+          currentHumidity
+        ) &&
+        !isNaN(
+          previousHumidity
+        )
+      ) {
+
+        const difference =
+          currentHumidity -
+          previousHumidity;
+
+
+        document.getElementById(
+          "humidityDifference"
+        ).textContent =
+          (
+            difference > 0
+              ? "+"
+              : ""
+          ) +
+          difference.toFixed(
+            0
+          ) +
+          "%";
+
+      }
+
+
+      /*
+       * CO2
+       */
+
+      const currentCO2 =
+        parseFloat(
+          currentData.co2
+        );
+
+      const previousCO2 =
+        parseFloat(
+          closest.co2
+        );
+
+
+      if (
+        !isNaN(
+          currentCO2
+        ) &&
+        !isNaN(
+          previousCO2
+        )
+      ) {
+
+        const difference =
+          currentCO2 -
+          previousCO2;
+
+
+        document.getElementById(
+          "co2Difference"
+        ).textContent =
+          (
+            difference > 0
+              ? "+"
+              : ""
+          ) +
+          Math.round(
+            difference
+          ) +
+          " ppm";
+
+      }
+
+
+      /*
+       * 気圧
+       */
+
+      const currentPressure =
+        parseFloat(
+          currentData.pressure
+        );
+
+      const previousPressure =
+        parseFloat(
+          closest.pressure
+        );
+
+
+      if (
+        !isNaN(
+          currentPressure
+        ) &&
+        !isNaN(
+          previousPressure
+        )
+      ) {
+
+        const difference =
+          currentPressure -
+          previousPressure;
+
+
+        document.getElementById(
+          "pressureDifference"
+        ).textContent =
+          (
+            difference > 0
+              ? "+"
+              : ""
+          ) +
+          difference.toFixed(
+            1
+          ) +
+          "hPa";
+
+      }
+
+
+      /*
+       * 騒音
+       */
+
+      const currentNoise =
+        parseFloat(
+          currentData.noise
+        );
+
+      const previousNoise =
+        parseFloat(
+          closest.noise
+        );
+
+
+      if (
+        !isNaN(
+          currentNoise
+        ) &&
+        !isNaN(
+          previousNoise
+        )
+      ) {
+
+        const difference =
+          currentNoise -
+          previousNoise;
+
+
+        document.getElementById(
+          "noiseDifference"
+        ).textContent =
+          (
+            difference > 0
+              ? "+"
+              : ""
+          ) +
+          difference.toFixed(
+            0
+          ) +
+          " dB";
+
+      }
+
+    }
+
+  })
+
+  .catch(error => {
+
+    console.error(
+      "屋内履歴取得エラー:",
+      error
+    );
+
+  });
+
+
+  /*
+   * indoor-daily.json
+   */
+
+  fetch(
+    "indoor-daily.json?cache=" +
+    Date.now()
+  )
+
+  .then(response => {
+
+    if (!response.ok) {
+
+      throw new Error(
+        "indoor-daily.json error"
+      );
+
+    }
+
+    return response.json();
+
+  })
+
+  .then(daily => {
+
+    if (
+      !daily ||
+      daily.length === 0
+    ) {
+
+      return;
+
+    }
+
+
+    const today =
+      new Date();
+
+
+    const todayString =
+      today.getFullYear() +
+      "-" +
+      String(
+        today.getMonth() + 1
+      ).padStart(2, "0") +
+      "-" +
+      String(
+        today.getDate()
+      ).padStart(2, "0");
+
+
+    const todayData =
+      daily.find(
+        item =>
+          item.date === todayString
+      );
+
+
+    function formatTime(value) {
+
+      if (!value) {
+        return "--:--";
+      }
+
+
+      const parts =
+        value.split(" ");
+
+
+      if (
+        parts.length < 2
+      ) {
+
+        return "--:--";
+
+      }
+
+
+      return parts[1];
+
+    }
+
+
+    if (
+      todayData &&
+      todayData.max_temp_time
+    ) {
+
+      document.getElementById(
+        "maxTempTime"
+      ).textContent =
+        formatTime(
+          todayData.max_temp_time
+        );
+
+    }
+
+
+    if (
+      todayData &&
+      todayData.min_temp_time
+    ) {
+
+      document.getElementById(
+        "minTempTime"
+      ).textContent =
+        formatTime(
+          todayData.min_temp_time
+        );
+
+    }
+
+  })
+
+  .catch(error => {
+
+    console.error(
+      "屋内daily取得エラー:",
+      error
+    );
+
+  });
+
+</script>
+
+</body>
+
+</html>
