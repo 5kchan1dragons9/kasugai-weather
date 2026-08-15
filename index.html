@@ -34,48 +34,140 @@
         sans-serif;
     }
 
-    /* タブ */
+
+    /* =========================
+       上部タブ
+       ========================= */
 
     .tabs {
+
       display: flex;
+
       width: 100%;
       height: 54px;
+
       background: white;
-      border-bottom: 1px solid #ddd;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+      border-bottom:
+        1px solid #ddd;
+
+      box-shadow:
+        0 2px 6px
+        rgba(0,0,0,0.08);
+
       position: relative;
-      z-index: 10;
+
+      z-index: 20;
+
     }
+
 
     .tab {
+
       flex: 1;
+
       border: none;
+
       background: white;
+
       color: #777;
+
       font-size: 16px;
+
       font-weight: 600;
+
       cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
+
+      -webkit-tap-highlight-color:
+        transparent;
+
     }
+
 
     .tab.active {
+
       color: #222;
+
       background: #f3f5f7;
-      box-shadow: inset 0 -3px 0 #222;
+
+      box-shadow:
+        inset 0 -3px 0 #222;
+
     }
 
-    /* ページ表示 */
+
+    /* =========================
+       スライド領域
+       ========================= */
+
+    .slider {
+
+      position: relative;
+
+      width: 100%;
+
+      height:
+        calc(100vh - 54px);
+
+      overflow: hidden;
+
+      touch-action: pan-y;
+
+    }
+
+
+    .pages {
+
+      display: flex;
+
+      width: 200%;
+
+      height: 100%;
+
+      transition:
+        transform 0.28s
+        ease-out;
+
+      will-change:
+        transform;
+
+    }
+
 
     .page {
-      display: none;
-      width: 100%;
-      height: calc(100vh - 54px);
+
+      display: block;
+
+      flex: 0 0 50%;
+
+      width: 50%;
+
+      height: 100%;
+
       border: none;
+
     }
 
-    .page.active {
-      display: block;
+
+    /* 屋外 */
+
+    .pages.outdoor {
+
+      transform:
+        translateX(0);
+
     }
+
+
+    /* 屋内 */
+
+    .pages.indoor {
+
+      transform:
+        translateX(-50%);
+
+    }
+
 
   </style>
 
@@ -84,7 +176,10 @@
 
 <body>
 
-  <!-- タブ -->
+
+  <!-- =========================
+       タブ
+       ========================= -->
 
   <div class="tabs">
 
@@ -95,6 +190,7 @@
     >
       🌤️ 屋外
     </button>
+
 
     <button
       class="tab"
@@ -107,62 +203,91 @@
   </div>
 
 
-  <!-- 屋外 -->
 
-  <iframe
-    id="outdoorPage"
-    class="page active"
-    src="outdoor.html"
-  ></iframe>
+  <!-- =========================
+       スライド領域
+       ========================= -->
+
+  <div
+    class="slider"
+    id="slider"
+  >
+
+    <div
+      class="pages outdoor"
+      id="pages"
+    >
+
+      <iframe
+        id="outdoorPage"
+        class="page"
+        src="outdoor.html"
+      ></iframe>
 
 
-  <!-- 屋内 -->
+      <iframe
+        id="indoorPage"
+        class="page"
+        src="indoor.html"
+      ></iframe>
 
-  <iframe
-    id="indoorPage"
-    class="page"
-    src="indoor.html"
-  ></iframe>
+    </div>
+
+  </div>
+
 
 
   <script>
 
-    /*
-     * 屋外・屋内の切り替え
-     */
+
+    /* =========================
+       現在のページ
+       ========================= */
+
+    let currentPage =
+      "outdoor";
+
+
+    const pages =
+      document.getElementById(
+        "pages"
+      );
+
+
+    const outdoorTab =
+      document.getElementById(
+        "outdoorTab"
+      );
+
+
+    const indoorTab =
+      document.getElementById(
+        "indoorTab"
+      );
+
+
+    /* =========================
+       ページ切り替え
+       ========================= */
 
     function showPage(page) {
 
-      const outdoorPage =
-        document.getElementById(
-          "outdoorPage"
+      currentPage =
+        page;
+
+
+      if (
+        page === "outdoor"
+      ) {
+
+        pages.classList.remove(
+          "indoor"
         );
 
-      const indoorPage =
-        document.getElementById(
-          "indoorPage"
+        pages.classList.add(
+          "outdoor"
         );
 
-      const outdoorTab =
-        document.getElementById(
-          "outdoorTab"
-        );
-
-      const indoorTab =
-        document.getElementById(
-          "indoorTab"
-        );
-
-
-      if (page === "outdoor") {
-
-        outdoorPage.classList.add(
-          "active"
-        );
-
-        indoorPage.classList.remove(
-          "active"
-        );
 
         outdoorTab.classList.add(
           "active"
@@ -175,15 +300,18 @@
       }
 
 
-      if (page === "indoor") {
+      else if (
+        page === "indoor"
+      ) {
 
-        indoorPage.classList.add(
-          "active"
+        pages.classList.remove(
+          "outdoor"
         );
 
-        outdoorPage.classList.remove(
-          "active"
+        pages.classList.add(
+          "indoor"
         );
+
 
         indoorTab.classList.add(
           "active"
@@ -198,28 +326,40 @@
     }
 
 
-    /*
-     * スワイプによる切り替え
-     */
 
-    let touchStartX = 0;
-    let touchStartY = 0;
+    /* =========================
+       スワイプ処理
+       ========================= */
 
-    const SWIPE_THRESHOLD = 60;
+    let startX = 0;
+
+    let startY = 0;
+
+    let startTime = 0;
 
 
-    document.addEventListener(
+    const slider =
+      document.getElementById(
+        "slider"
+      );
+
+
+    slider.addEventListener(
       "touchstart",
       function(event) {
 
         const touch =
-          event.changedTouches[0];
+          event.touches[0];
 
-        touchStartX =
-          touch.screenX;
 
-        touchStartY =
-          touch.screenY;
+        startX =
+          touch.clientX;
+
+        startY =
+          touch.clientY;
+
+        startTime =
+          Date.now();
 
       },
       {
@@ -228,87 +368,109 @@
     );
 
 
-    document.addEventListener(
+    slider.addEventListener(
       "touchend",
       function(event) {
 
         const touch =
           event.changedTouches[0];
 
-        const touchEndX =
-          touch.screenX;
 
-        const touchEndY =
-          touch.screenY;
+        const endX =
+          touch.clientX;
+
+        const endY =
+          touch.clientY;
 
 
         const diffX =
-          touchEndX - touchStartX;
+          endX - startX;
+
 
         const diffY =
-          touchEndY - touchStartY;
+          endY - startY;
+
+
+        const elapsed =
+          Date.now() -
+          startTime;
 
 
         /*
-         * 縦方向の操作が大きい場合は
-         * スワイプとして扱わない
-         */
-
-        if (
-          Math.abs(diffY) >
-          Math.abs(diffX)
-        ) {
-          return;
-        }
-
-
-        /*
-         * 短い操作は無視
+         * 縦スクロールを
+         * 横スワイプと誤認しない
          */
 
         if (
           Math.abs(diffX) <
-          SWIPE_THRESHOLD
+          Math.abs(diffY)
         ) {
+
           return;
+
         }
 
 
         /*
-         * 現在表示しているページを確認
+         * 小さすぎる移動は無視
          */
 
-        const outdoorPage =
-          document.getElementById(
-            "outdoorPage"
-          );
+        if (
+          Math.abs(diffX) < 50
+        ) {
 
-        const isOutdoor =
-          outdoorPage.classList.contains(
-            "active"
-          );
+          return;
+
+        }
 
 
         /*
-         * 左スワイプ
+         * 長すぎる操作は無視
+         */
+
+        if (
+          elapsed > 800
+        ) {
+
+          return;
+
+        }
+
+
+        /*
+         * 左へスワイプ
+         *
          * 屋外 → 屋内
          */
 
-        if (diffX < 0 && isOutdoor) {
+        if (
+          diffX < -50 &&
+          currentPage ===
+            "outdoor"
+        ) {
 
-          showPage("indoor");
+          showPage(
+            "indoor"
+          );
 
         }
 
 
         /*
-         * 右スワイプ
+         * 右へスワイプ
+         *
          * 屋内 → 屋外
          */
 
-        if (diffX > 0 && !isOutdoor) {
+        else if (
+          diffX > 50 &&
+          currentPage ===
+            "indoor"
+        ) {
 
-          showPage("outdoor");
+          showPage(
+            "outdoor"
+          );
 
         }
 
@@ -318,7 +480,9 @@
       }
     );
 
+
   </script>
+
 
 </body>
 
