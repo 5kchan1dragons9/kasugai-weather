@@ -172,33 +172,6 @@
       font-size: 12px;
     }
 
-    /* 過去24時間 */
-
-    .history-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .history-card {
-      background: white;
-      border-radius: 16px;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 2px 9px rgba(0,0,0,0.07);
-    }
-
-    .history-card .label {
-      color: #777;
-      font-size: 13px;
-      margin-bottom: 5px;
-    }
-
-    .history-card .value {
-      font-size: 23px;
-      font-weight: 700;
-    }
-
     /* 24時間前との比較 */
 
     .comparison-card {
@@ -290,7 +263,7 @@
       padding: 12px 0;
     }
 
-    /* グラフ */
+    /* 気温グラフ */
 
     .chart-card {
       background: white;
@@ -555,55 +528,6 @@
   </div>
 
 
-  <!-- 過去24時間 -->
-
-  <div class="section-title">
-    📊 過去24時間
-  </div>
-
-  <div class="history-grid">
-
-    <div class="history-card">
-
-      <div class="label">
-        🔺 最高気温
-      </div>
-
-      <div class="value">
-
-        <span id="historyMax">
-          --.-
-        </span>
-
-        ℃
-
-      </div>
-
-    </div>
-
-
-    <div class="history-card">
-
-      <div class="label">
-        <span style="color:#2878d0;">▼</span>
-        最低気温
-      </div>
-
-      <div class="value">
-
-        <span id="historyMin">
-          --.-
-        </span>
-
-        ℃
-
-      </div>
-
-    </div>
-
-  </div>
-
-
   <!-- 24時間前との比較 -->
 
   <div class="section-title">
@@ -722,40 +646,6 @@
     <div class="chart-wrapper">
 
       <canvas id="temperatureChart"></canvas>
-
-    </div>
-
-  </div>
-
-
-  <!-- 湿度グラフ -->
-
-  <div class="chart-card">
-
-    <div class="chart-title">
-      💧 湿度（24時間）
-    </div>
-
-    <div class="chart-wrapper">
-
-      <canvas id="humidityChart"></canvas>
-
-    </div>
-
-  </div>
-
-
-  <!-- 気圧グラフ -->
-
-  <div class="chart-card">
-
-    <div class="chart-title">
-      🧭 気圧（24時間）
-    </div>
-
-    <div class="chart-wrapper">
-
-      <canvas id="pressureChart"></canvas>
 
     </div>
 
@@ -981,46 +871,6 @@
 
 
     /*
-     * 過去24時間の最高・最低
-     */
-
-    const temperatures =
-      graphHistory
-
-        .map(item =>
-          parseFloat(
-            item.temperature
-          )
-        )
-
-        .filter(value =>
-          !isNaN(value)
-        );
-
-
-    if (
-      temperatures.length > 0
-    ) {
-
-      document.getElementById(
-        "historyMax"
-      ).textContent =
-        Math.max(
-          ...temperatures
-        ).toFixed(1);
-
-
-      document.getElementById(
-        "historyMin"
-      ).textContent =
-        Math.min(
-          ...temperatures
-        ).toFixed(1);
-
-    }
-
-
-    /*
      * グラフの時刻
      */
 
@@ -1035,54 +885,6 @@
 
         }
       );
-
-
-    /*
-     * グラフ共通設定
-     */
-
-    const commonOptions = {
-
-      responsive: true,
-
-      maintainAspectRatio:
-        false,
-
-      interaction: {
-
-        mode: "index",
-
-        intersect: false
-
-      },
-
-      plugins: {
-
-        legend: {
-
-          display: false
-
-        }
-
-      },
-
-      scales: {
-
-        x: {
-
-          ticks: {
-
-            maxTicksLimit: 8,
-
-            autoSkip: true
-
-          }
-
-        }
-
-      }
-
-    };
 
 
     /*
@@ -1131,11 +933,42 @@
 
         options: {
 
-          ...commonOptions,
+          responsive: true,
+
+          maintainAspectRatio:
+            false,
+
+          interaction: {
+
+            mode: "index",
+
+            intersect: false
+
+          },
+
+          plugins: {
+
+            legend: {
+
+              display: false
+
+            }
+
+          },
 
           scales: {
 
-            ...commonOptions.scales,
+            x: {
+
+              ticks: {
+
+                maxTicksLimit: 8,
+
+                autoSkip: true
+
+              }
+
+            },
 
             y: {
 
@@ -1144,152 +977,6 @@
                 display: true,
 
                 text: "℃"
-
-              }
-
-            }
-
-          }
-
-        }
-
-      }
-
-    );
-
-
-    /*
-     * 湿度グラフ
-     */
-
-    new Chart(
-
-      document.getElementById(
-        "humidityChart"
-      ),
-
-      {
-
-        type: "line",
-
-        data: {
-
-          labels: labels,
-
-          datasets: [
-
-            {
-
-              label: "湿度",
-
-              data:
-                graphHistory.map(
-                  item =>
-                    item.humidity
-                ),
-
-              tension: 0.25,
-
-              pointRadius: 1,
-
-              pointHoverRadius: 5,
-
-              fill: false
-
-            }
-
-          ]
-
-        },
-
-        options: {
-
-          ...commonOptions,
-
-          scales: {
-
-            ...commonOptions.scales,
-
-            y: {
-
-              title: {
-
-                display: true,
-
-                text: "%"
-
-              }
-
-            }
-
-          }
-
-        }
-
-      }
-
-    );
-
-
-    /*
-     * 気圧グラフ
-     */
-
-    new Chart(
-
-      document.getElementById(
-        "pressureChart"
-      ),
-
-      {
-
-        type: "line",
-
-        data: {
-
-          labels: labels,
-
-          datasets: [
-
-            {
-
-              label: "気圧",
-
-              data:
-                graphHistory.map(
-                  item =>
-                    item.pressure
-                ),
-
-              tension: 0.25,
-
-              pointRadius: 1,
-
-              pointHoverRadius: 5,
-
-              fill: false
-
-            }
-
-          ]
-
-        },
-
-        options: {
-
-          ...commonOptions,
-
-          scales: {
-
-            ...commonOptions.scales,
-
-            y: {
-
-              title: {
-
-                display: true,
-
-                text: "hPa"
 
               }
 
