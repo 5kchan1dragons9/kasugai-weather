@@ -10,7 +10,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>春日井市の気象（屋内）</title>
+  <title>春日井市・リビング（屋内）の気象</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -54,6 +54,8 @@
       font-size: 13px;
     }
 
+    /* 観測時刻 */
+
     .observation-time {
       font-size: 18px;
       font-weight: 600;
@@ -65,6 +67,8 @@
       font-weight: 700;
       color: #222;
     }
+
+    /* 現在の気温 */
 
     .main-temperature {
       background: white;
@@ -93,6 +97,8 @@
       margin-left: 3px;
       font-weight: 500;
     }
+
+    /* 現在値 */
 
     .current-grid {
       display: grid;
@@ -125,19 +131,15 @@
       margin-top: 2px;
     }
 
-    .temp-high {
-      color: #d94b4b;
-    }
-
-    .temp-low {
-      color: #2878d0;
-    }
+    /* セクションタイトル */
 
     .section-title {
       font-size: 17px;
       font-weight: 700;
       margin: 24px 3px 10px;
     }
+
+    /* 今日 */
 
     .daily-grid {
       display: grid;
@@ -170,6 +172,16 @@
       font-size: 12px;
     }
 
+    .temp-high {
+      color: #d94b4b;
+    }
+
+    .temp-low {
+      color: #2878d0;
+    }
+
+    /* 1時間前との比較 */
+
     .comparison-card {
       background: white;
       border-radius: 16px;
@@ -199,6 +211,8 @@
       font-size: 18px;
     }
 
+    /* グラフ */
+
     .chart-card {
       background: white;
       border-radius: 16px;
@@ -218,12 +232,16 @@
       height: 270px;
     }
 
+    /* 更新時刻 */
+
     .update-info {
       text-align: center;
       color: #777;
       font-size: 12px;
       margin: 22px 0 8px;
     }
+
+    /* エラー */
 
     .error-message {
       display: none;
@@ -235,6 +253,8 @@
       font-size: 13px;
       text-align: center;
     }
+
+    /* スマートフォン */
 
     @media (max-width: 600px) {
 
@@ -271,6 +291,8 @@
       }
 
     }
+
+    /* タブレット・PC */
 
     @media (min-width: 601px) {
 
@@ -349,6 +371,10 @@
         font-size: 26px;
       }
 
+      .daily-card .time {
+        font-size: 13px;
+      }
+
       .comparison-card {
         padding: 20px 24px;
         border-radius: 18px;
@@ -382,6 +408,8 @@
 
     }
 
+    /* iPad・小型タブレット横向き以上 */
+
     @media (min-width: 900px) {
 
       .container {
@@ -392,7 +420,8 @@
         padding: 32px 24px;
       }
 
-      .current-card {
+      .current-card,
+      .daily-card {
         padding: 22px;
       }
 
@@ -401,6 +430,8 @@
       }
 
     }
+
+    /* 大型PC */
 
     @media (min-width: 1200px) {
 
@@ -433,7 +464,7 @@
 
   <header>
 
-    <h1>🏠リビング（屋内）のデータ</h1>
+    <h1>🏠 リビング（屋内）のデータ</h1>
 
     <div class="subtitle">
       Netatmo Weather Station
@@ -487,7 +518,7 @@
   </div>
 
 
-  <!-- 屋内データ -->
+  <!-- 湿度・気圧・CO2・騒音 -->
 
   <div class="current-grid">
 
@@ -509,29 +540,6 @@
 
       <div class="unit">
         湿度
-      </div>
-
-    </div>
-
-
-    <div class="current-card">
-
-      <div class="icon">
-        🫁
-      </div>
-
-      <div class="value">
-
-        <span id="co2">
-          ---
-        </span>
-
-        ppm
-
-      </div>
-
-      <div class="unit">
-        CO₂
       </div>
 
     </div>
@@ -563,13 +571,36 @@
     <div class="current-card">
 
       <div class="icon">
+        🟢
+      </div>
+
+      <div class="value">
+
+        <span id="co2">
+          ----
+        </span>
+
+        ppm
+
+      </div>
+
+      <div class="unit">
+        CO₂
+      </div>
+
+    </div>
+
+
+    <div class="current-card">
+
+      <div class="icon">
         🔊
       </div>
 
       <div class="value">
 
         <span id="noise">
-          --
+          ---
         </span>
 
         dB
@@ -705,19 +736,6 @@
     <div class="comparison-row">
 
       <span>
-        CO₂差
-      </span>
-
-      <strong id="co2Difference">
-        -- ppm
-      </strong>
-
-    </div>
-
-
-    <div class="comparison-row">
-
-      <span>
         気圧差
       </span>
 
@@ -731,11 +749,11 @@
     <div class="comparison-row">
 
       <span>
-        騒音差
+        CO₂差
       </span>
 
-      <strong id="noiseDifference">
-        -- dB
+      <strong id="co2Difference">
+        --ppm
       </strong>
 
     </div>
@@ -743,12 +761,12 @@
   </div>
 
 
-  <!-- 気温 -->
+  <!-- 過去24時間 気温 -->
 
   <div class="chart-card">
 
     <div class="chart-title">
-      🌡️ 屋内の気温（24時間）
+      🌡️ 気温（24時間）
     </div>
 
     <div class="chart-wrapper">
@@ -760,12 +778,12 @@
   </div>
 
 
-  <!-- CO2 -->
+  <!-- 過去24時間 CO2 -->
 
   <div class="chart-card">
 
     <div class="chart-title">
-      🫁 CO₂（24時間）
+      🟢 CO₂（24時間）
     </div>
 
     <div class="chart-wrapper">
@@ -793,7 +811,7 @@
 <script>
 
   /*
-   * 10分ごとにページ更新
+   * 10分ごとにページを自動更新
    */
 
   setTimeout(
@@ -831,64 +849,25 @@
     currentData = data;
 
 
-    /*
-     * 気温
-     */
-
-    if (
-      data.temperature !== null &&
-      data.temperature !== undefined
-    ) {
-
-      document.getElementById(
-        "temperature"
-      ).textContent =
-        parseFloat(
-          data.temperature
-        ).toFixed(1);
-
-    }
+    document.getElementById(
+      "temperature"
+    ).textContent =
+      parseFloat(
+        data.temperature
+      ).toFixed(1);
 
 
-    /*
-     * 湿度
-     */
-
-    if (
-      data.humidity !== null &&
-      data.humidity !== undefined
-    ) {
-
-      document.getElementById(
-        "humidity"
-      ).textContent =
-        data.humidity;
-
-    }
+    document.getElementById(
+      "humidity"
+    ).textContent =
+      data.humidity;
 
 
-    /*
-     * 気圧
-     */
+    document.getElementById(
+      "pressure"
+    ).textContent =
+      data.pressure;
 
-    if (
-      data.pressure !== null &&
-      data.pressure !== undefined
-    ) {
-
-      document.getElementById(
-        "pressure"
-      ).textContent =
-        parseFloat(
-          data.pressure
-        ).toFixed(1);
-
-    }
-
-
-    /*
-     * CO2
-     */
 
     if (
       data.co2 !== null &&
@@ -905,10 +884,6 @@
     }
 
 
-    /*
-     * 騒音
-     */
-
     if (
       data.noise !== null &&
       data.noise !== undefined
@@ -923,10 +898,6 @@
 
     }
 
-
-    /*
-     * 今日の最高・最低
-     */
 
     if (
       data.max_temp !== null &&
@@ -958,10 +929,6 @@
     }
 
 
-    /*
-     * 更新時刻
-     */
-
     document.getElementById(
       "updated"
     ).textContent =
@@ -969,7 +936,7 @@
 
 
     /*
-     * 観測日時
+     * 観測日・時刻
      */
 
     const updatedDate =
@@ -991,9 +958,7 @@
       document.getElementById(
         "observationDate"
       ).textContent =
-        (
-          updatedDate.getMonth() + 1
-        ) +
+        (updatedDate.getMonth() + 1) +
         "月" +
         updatedDate.getDate() +
         "日";
@@ -1030,7 +995,7 @@
 
 
   /*
-   * 屋内履歴
+   * 屋内履歴データ
    */
 
   fetch(
@@ -1056,14 +1021,12 @@
       !history ||
       history.length === 0
     ) {
-
       return;
-
     }
 
 
     /*
-     * JST日時変換
+     * 日時をDateへ変換
      */
 
     function parseJST(value) {
@@ -1079,12 +1042,16 @@
     }
 
 
+    const now =
+      Date.now();
+
+
     /*
      * 過去24時間
      */
 
     const cutoff =
-      Date.now() -
+      now -
       24 * 60 * 60 * 1000;
 
 
@@ -1097,25 +1064,28 @@
           );
 
         return (
-          time.getTime() >= cutoff
+          time.getTime() >=
+          cutoff
         );
 
       });
 
 
     const labels =
-      graphHistory.map(item => {
+      graphHistory.map(
+        item => {
 
-        const parts =
-          item.time.split(" ");
+          const parts =
+            item.time.split(" ");
 
-        return parts[1];
+          return parts[1];
 
-      });
+        }
+      );
 
 
     /*
-     * 気温グラフ
+     * 気温24時間グラフ
      */
 
     new Chart(
@@ -1141,11 +1111,9 @@
               data:
                 graphHistory.map(
                   item =>
-                    item.temperature === null
-                      ? null
-                      : parseFloat(
-                          item.temperature
-                        )
+                    parseFloat(
+                      item.temperature
+                    )
                 ),
 
               tension: 0.25,
@@ -1179,7 +1147,9 @@
           plugins: {
 
             legend: {
+
               display: false
+
             }
 
           },
@@ -1189,8 +1159,11 @@
             x: {
 
               ticks: {
+
                 maxTicksLimit: 8,
+
                 autoSkip: true
+
               }
 
             },
@@ -1198,8 +1171,11 @@
             y: {
 
               title: {
+
                 display: true,
+
                 text: "℃"
+
               }
 
             }
@@ -1214,91 +1190,115 @@
 
 
     /*
-     * CO2グラフ
+     * CO2 24時間グラフ
      */
 
-    new Chart(
+    const co2History =
+      graphHistory.filter(
+        item =>
+          item.co2 !== null &&
+          item.co2 !== undefined
+      );
 
-      document.getElementById(
-        "co2Chart"
-      ),
 
-      {
+    if (
+      co2History.length > 0
+    ) {
 
-        type: "line",
+      new Chart(
 
-        data: {
+        document.getElementById(
+          "co2Chart"
+        ),
 
-          labels: labels,
+        {
 
-          datasets: [
+          type: "line",
 
-            {
+          data: {
 
-              label: "CO₂",
+            labels:
+              co2History.map(
+                item =>
+                  item.time.split(" ")[1]
+              ),
 
-              data:
-                graphHistory.map(
-                  item =>
-                    item.co2 === null
-                      ? null
-                      : parseFloat(
-                          item.co2
-                        )
-                ),
+            datasets: [
 
-              tension: 0.25,
+              {
 
-              pointRadius: 1,
+                label: "CO₂",
 
-              pointHoverRadius: 5,
+                data:
+                  co2History.map(
+                    item =>
+                      parseFloat(
+                        item.co2
+                      )
+                  ),
 
-              fill: false
+                tension: 0.25,
 
-            }
+                pointRadius: 1,
 
-          ]
+                pointHoverRadius: 5,
 
-        },
+                fill: false
 
-        options: {
+              }
 
-          responsive: true,
-
-          maintainAspectRatio: false,
-
-          interaction: {
-
-            mode: "index",
-
-            intersect: false
-
-          },
-
-          plugins: {
-
-            legend: {
-              display: false
-            }
+            ]
 
           },
 
-          scales: {
+          options: {
 
-            x: {
+            responsive: true,
 
-              ticks: {
-                maxTicksLimit: 8,
-                autoSkip: true
+            maintainAspectRatio: false,
+
+            interaction: {
+
+              mode: "index",
+
+              intersect: false
+
+            },
+
+            plugins: {
+
+              legend: {
+
+                display: false
+
               }
 
             },
 
-            y: {
+            scales: {
 
-              title: {
-                display: true,
-                text: "ppm"
+              x: {
+
+                ticks: {
+
+                  maxTicksLimit: 8,
+
+                  autoSkip: true
+
+                }
+
+              },
+
+              y: {
+
+                title: {
+
+                  display: true,
+
+                  text: "ppm"
+
+                }
+
               }
 
             }
@@ -1307,9 +1307,9 @@
 
         }
 
-      }
+      );
 
-    );
+    }
 
 
     /*
@@ -1317,7 +1317,7 @@
      */
 
     const targetTime =
-      Date.now() -
+      now -
       60 * 60 * 1000;
 
 
@@ -1363,11 +1363,6 @@
       currentData
     ) {
 
-
-      /*
-       * 気温
-       */
-
       const currentTemperature =
         parseFloat(
           currentData.temperature
@@ -1378,6 +1373,59 @@
           closest.temperature
         );
 
+      const currentHumidity =
+        parseFloat(
+          currentData.humidity
+        );
+
+      const previousHumidity =
+        parseFloat(
+          closest.humidity
+        );
+
+      const currentPressure =
+        parseFloat(
+          currentData.pressure
+        );
+
+      const previousPressure =
+        parseFloat(
+          closest.pressure
+        );
+
+      const currentCO2 =
+        parseFloat(
+          currentData.co2
+        );
+
+      const previousCO2 =
+        parseFloat(
+          closest.co2
+        );
+
+
+      /*
+       * 1時間前の気温
+       */
+
+      if (
+        !isNaN(
+          previousTemperature
+        )
+      ) {
+
+        document.getElementById(
+          "previousTemperature"
+        ).textContent =
+          previousTemperature.toFixed(1) +
+          "℃";
+
+      }
+
+
+      /*
+       * 気温差
+       */
 
       if (
         !isNaN(
@@ -1393,45 +1441,25 @@
           previousTemperature;
 
 
-        document.getElementById(
-          "previousTemperature"
-        ).textContent =
-          previousTemperature.toFixed(
-            1
-          ) +
-          "℃";
+        const sign =
+          difference > 0
+            ? "+"
+            : "";
 
 
         document.getElementById(
           "temperatureDifference"
         ).textContent =
-          (
-            difference > 0
-              ? "+"
-              : ""
-          ) +
-          difference.toFixed(
-            1
-          ) +
+          sign +
+          difference.toFixed(1) +
           "℃";
 
       }
 
 
       /*
-       * 湿度
+       * 湿度差
        */
-
-      const currentHumidity =
-        parseFloat(
-          currentData.humidity
-        );
-
-      const previousHumidity =
-        parseFloat(
-          closest.humidity
-        );
-
 
       if (
         !isNaN(
@@ -1447,81 +1475,25 @@
           previousHumidity;
 
 
+        const sign =
+          difference > 0
+            ? "+"
+            : "";
+
+
         document.getElementById(
           "humidityDifference"
         ).textContent =
-          (
-            difference > 0
-              ? "+"
-              : ""
-          ) +
-          difference.toFixed(
-            0
-          ) +
+          sign +
+          difference.toFixed(0) +
           "%";
 
       }
 
 
       /*
-       * CO2
+       * 気圧差
        */
-
-      const currentCO2 =
-        parseFloat(
-          currentData.co2
-        );
-
-      const previousCO2 =
-        parseFloat(
-          closest.co2
-        );
-
-
-      if (
-        !isNaN(
-          currentCO2
-        ) &&
-        !isNaN(
-          previousCO2
-        )
-      ) {
-
-        const difference =
-          currentCO2 -
-          previousCO2;
-
-
-        document.getElementById(
-          "co2Difference"
-        ).textContent =
-          (
-            difference > 0
-              ? "+"
-              : ""
-          ) +
-          Math.round(
-            difference
-          ) +
-          " ppm";
-
-      }
-
-
-      /*
-       * 気圧
-       */
-
-      const currentPressure =
-        parseFloat(
-          currentData.pressure
-        );
-
-      const previousPressure =
-        parseFloat(
-          closest.pressure
-        );
-
 
       if (
         !isNaN(
@@ -1537,63 +1509,54 @@
           previousPressure;
 
 
+        const sign =
+          difference > 0
+            ? "+"
+            : "";
+
+
         document.getElementById(
           "pressureDifference"
         ).textContent =
-          (
-            difference > 0
-              ? "+"
-              : ""
-          ) +
-          difference.toFixed(
-            1
-          ) +
+          sign +
+          difference.toFixed(1) +
           "hPa";
 
       }
 
 
       /*
-       * 騒音
+       * CO2差
        */
-
-      const currentNoise =
-        parseFloat(
-          currentData.noise
-        );
-
-      const previousNoise =
-        parseFloat(
-          closest.noise
-        );
-
 
       if (
         !isNaN(
-          currentNoise
+          currentCO2
         ) &&
         !isNaN(
-          previousNoise
+          previousCO2
         )
       ) {
 
         const difference =
-          currentNoise -
-          previousNoise;
+          currentCO2 -
+          previousCO2;
+
+
+        const sign =
+          difference > 0
+            ? "+"
+            : "";
 
 
         document.getElementById(
-          "noiseDifference"
+          "co2Difference"
         ).textContent =
-          (
-            difference > 0
-              ? "+"
-              : ""
+          sign +
+          Math.round(
+            difference
           ) +
-          difference.toFixed(
-            0
-          ) +
-          " dB";
+          "ppm";
 
       }
 
@@ -1613,6 +1576,8 @@
 
   /*
    * indoor-daily.json
+   *
+   * 今日の最高・最低気温時刻
    */
 
   fetch(
@@ -1665,7 +1630,8 @@
     const todayData =
       daily.find(
         item =>
-          item.date === todayString
+          item.date ===
+          todayString
       );
 
 
@@ -1675,10 +1641,8 @@
         return "--:--";
       }
 
-
       const parts =
         value.split(" ");
-
 
       if (
         parts.length < 2
@@ -1687,7 +1651,6 @@
         return "--:--";
 
       }
-
 
       return parts[1];
 
