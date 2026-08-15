@@ -5,5 +5,12 @@
     "max_temp_time": "2026-08-15 13:50",
     "min_temp": 25.7,
     "min_temp_time": "2026-08-15 05:27"
+  },
+  {
+    "date": "2026-08-16",
+    "max_temp": 27.8,
+    "max_temp_time": "2026-08-16 00:01",
+    "min_temp": 27.8,
+    "min_temp_time": "2026-08-16 00:01"
   }
 ]
