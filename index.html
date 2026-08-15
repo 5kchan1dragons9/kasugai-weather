@@ -389,6 +389,220 @@
 
     }
 
+/* ========================================
+   タブレット・PC向けレイアウト
+   ※スマートフォンの表示は変更しない
+   ======================================== */
+
+@media (min-width: 601px) {
+
+  body {
+    padding: 24px;
+  }
+
+  .container {
+    max-width: 1050px;
+  }
+
+  header {
+    margin: 6px 4px 24px;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  /* 現在の気温 */
+
+  .main-temperature {
+    padding: 30px 20px;
+    margin-bottom: 16px;
+  }
+
+  .main-temperature .temperature {
+    font-size: 72px;
+  }
+
+  .main-temperature .label {
+    font-size: 16px;
+  }
+
+  .observation-time {
+    font-size: 19px;
+    margin-bottom: 14px;
+  }
+
+  /* 湿度・気圧 */
+
+  .current-grid {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .current-card {
+    padding: 22px;
+    border-radius: 18px;
+  }
+
+  .current-card .icon {
+    font-size: 26px;
+  }
+
+  .current-card .value {
+    font-size: 28px;
+  }
+
+  /* セクション */
+
+  .section-title {
+    font-size: 18px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+
+  /* 今日 */
+
+  .daily-grid {
+    gap: 16px;
+  }
+
+  .daily-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .daily-card .value {
+    font-size: 26px;
+  }
+
+  .daily-card .time {
+    font-size: 13px;
+  }
+
+  /* 24時間前との比較 */
+
+  .comparison-card {
+    padding: 20px 24px;
+    border-radius: 18px;
+  }
+
+  .comparison-row {
+    padding: 11px 0;
+  }
+
+  .comparison-row span {
+    font-size: 15px;
+  }
+
+  .comparison-row strong {
+    font-size: 19px;
+  }
+
+  /* 月間ランキング */
+
+  .ranking-grid {
+    gap: 16px;
+  }
+
+  .ranking-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .ranking-title {
+    font-size: 16px;
+  }
+
+  .ranking-row {
+    padding: 11px 0;
+  }
+
+  /* グラフ */
+
+  .chart-card {
+    padding: 20px;
+    margin-top: 16px;
+    border-radius: 18px;
+  }
+
+  .chart-title {
+    font-size: 18px;
+  }
+
+  .chart-wrapper {
+    height: 320px;
+  }
+
+}
+
+
+/* ========================================
+   iPad・小型タブレット横向き以上
+   ======================================== */
+
+@media (min-width: 900px) {
+
+  .container {
+    max-width: 1100px;
+  }
+
+  /*
+   * 現在値を少しワイドに
+   */
+
+  .main-temperature {
+    padding: 32px 24px;
+  }
+
+  /*
+   * カードの余白を少し拡大
+   */
+
+  .current-card,
+  .daily-card,
+  .ranking-card {
+    padding: 22px;
+  }
+
+  /*
+   * グラフを横長に
+   */
+
+  .chart-wrapper {
+    height: 340px;
+  }
+
+}
+
+
+/* ========================================
+   大型PC
+   ======================================== */
+
+@media (min-width: 1200px) {
+
+  body {
+    padding: 30px;
+  }
+
+  .container {
+    max-width: 1150px;
+  }
+
+  .main-temperature .temperature {
+    font-size: 76px;
+  }
+
+  .chart-wrapper {
+    height: 360px;
+  }
+
+}
+    
   </style>
 
 </head>
