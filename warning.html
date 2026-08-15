@@ -55,18 +55,14 @@
 
 
     /* ================================
-       タイトル部分
+       ヘッダー
        ================================ */
 
-    .title-row {
+    .header {
 
-      display: flex;
+      position: relative;
 
-      align-items: center;
-
-      justify-content: space-between;
-
-      gap: 12px;
+      padding-right: 50px;
 
       margin-bottom: 18px;
 
@@ -83,8 +79,6 @@
 
       font-weight: 700;
 
-      margin: 0;
-
     }
 
 
@@ -94,20 +88,24 @@
 
     .refresh-button {
 
-      flex-shrink: 0;
+      position: absolute;
 
-      width: 38px;
-      height: 38px;
+      top: 0;
+      right: 0;
+
+      width: 36px;
+      height: 36px;
 
       border: none;
 
-      border-radius: 50%;
+      border-radius: 10px;
 
       background: white;
 
-      color: #555;
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.10);
 
-      font-size: 20px;
+      font-size: 19px;
 
       display: flex;
 
@@ -117,60 +115,26 @@
 
       cursor: pointer;
 
-      box-shadow:
-        0 2px 8px rgba(0,0,0,0.10);
-
       -webkit-tap-highlight-color:
         transparent;
-
-      transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
 
     }
 
 
     .refresh-button:active {
 
-      transform: scale(0.90);
+      transform: scale(0.92);
+
+      background: #f5f5f5;
 
     }
 
-
-    .refresh-button:disabled {
-
-      opacity: 0.45;
-
-      cursor: default;
-
-    }
-
-
-    /* ================================
-       更新中アニメーション
-       ================================ */
 
     .refresh-button.loading {
 
-      animation:
-        refresh-spin 0.8s linear infinite;
+      opacity: 0.55;
 
-    }
-
-
-    @keyframes refresh-spin {
-
-      from {
-
-        transform: rotate(0deg);
-
-      }
-
-      to {
-
-        transform: rotate(360deg);
-
-      }
+      pointer-events: none;
 
     }
 
@@ -343,13 +307,11 @@
 
       }
 
-
       .title {
 
         font-size: 21px;
 
       }
-
 
       .refresh-button {
 
@@ -371,14 +333,9 @@
 
       .container {
 
-        max-width: 900px;
-
-        margin: 0 auto;
-
         padding: 24px;
 
       }
-
 
       .title {
 
@@ -386,13 +343,12 @@
 
       }
 
-
       .refresh-button {
 
-        width: 40px;
-        height: 40px;
+        width: 38px;
+        height: 38px;
 
-        font-size: 21px;
+        font-size: 20px;
 
       }
 
@@ -409,11 +365,10 @@
   <div class="container">
 
 
-    <!-- =================================
-         タイトル ＋ 更新ボタン
-         ================================= -->
+    <!-- ヘッダー -->
 
-    <div class="title-row">
+    <div class="header">
+
 
       <div class="title">
 
@@ -422,24 +377,25 @@
       </div>
 
 
+      <!-- 更新ボタン -->
+
       <button
         id="refreshButton"
         class="refresh-button"
         type="button"
-        aria-label="注警報を更新"
-        title="更新"
+        aria-label="更新"
+        onclick="manualRefresh()"
       >
 
-        🔄
+        ↻
 
       </button>
+
 
     </div>
 
 
-    <!-- =================================
-         表示エリア
-         ================================= -->
+    <!-- 表示エリア -->
 
     <div id="content">
 
@@ -452,9 +408,7 @@
     </div>
 
 
-    <!-- =================================
-         更新時刻
-         ================================= -->
+    <!-- 更新時刻 -->
 
     <div
       class="updated"
@@ -474,39 +428,32 @@
 
 
     /* ================================
-       更新ボタン
-       ================================ */
-
-    const refreshButton =
-      document.getElementById(
-        "refreshButton"
-      );
-
-
-    /* ================================
        注警報データ取得
        ================================ */
 
     async function loadWarningData() {
 
 
-      /*
-       * 更新中表示
-       */
-
-      refreshButton.disabled = true;
-
-      refreshButton.classList.add(
-        "loading"
-      );
+      const button =
+        document.getElementById(
+          "refreshButton"
+        );
 
 
       try {
 
 
         /*
+         * 更新ボタンを読み込み中表示
+         */
+
+        button.classList.add(
+          "loading"
+        );
+
+
+        /*
          * GitHub Pagesのキャッシュを避ける
-         * 現在時刻をURLに付加
          */
 
         const url =
@@ -564,7 +511,6 @@
         ).textContent =
           "データ取得エラー";
 
-
       }
 
 
@@ -572,16 +518,26 @@
 
 
         /*
-         * 更新完了
+         * ボタンを通常状態へ戻す
          */
 
-        refreshButton.disabled = false;
-
-        refreshButton.classList.remove(
+        button.classList.remove(
           "loading"
         );
 
       }
+
+    }
+
+
+
+    /* ================================
+       手動更新
+       ================================ */
+
+    function manualRefresh() {
+
+      loadWarningData();
 
     }
 
@@ -606,9 +562,9 @@
         );
 
 
-      /* ================================
+      /* --------------------------------
          警報・注意報なし
-         ================================ */
+         -------------------------------- */
 
       if (
         !data.warnings ||
@@ -630,9 +586,9 @@
       }
 
 
-      /* ================================
+      /* --------------------------------
          警報・注意報あり
-         ================================ */
+         -------------------------------- */
 
       else {
 
@@ -683,7 +639,6 @@
 
                 </div>
 
-
                 <div class="warning-status">
 
                   ${status}
@@ -708,9 +663,9 @@
       }
 
 
-      /* ================================
+      /* --------------------------------
          更新時刻
-         ================================ */
+         -------------------------------- */
 
       if (data.updated) {
 
@@ -755,22 +710,8 @@
 
       }
 
+
     }
-
-
-
-    /* ================================
-       手動更新ボタン
-       ================================ */
-
-    refreshButton.addEventListener(
-      "click",
-      function() {
-
-        loadWarningData();
-
-      }
-    );
 
 
 
