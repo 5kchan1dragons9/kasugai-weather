@@ -182,7 +182,7 @@
       font-size: 12px;
     }
 
-    /* 24時間前との比較 */
+    /* 1時間前との比較 */
 
     .comparison-card {
       background: white;
@@ -389,220 +389,221 @@
 
     }
 
-/* ========================================
-   タブレット・PC向けレイアウト
-   ※スマートフォンの表示は変更しない
-   ======================================== */
 
-@media (min-width: 601px) {
+    /* ========================================
+       タブレット・PC向けレイアウト
+       ※スマートフォンの表示は変更しない
+       ======================================== */
 
-  body {
-    padding: 24px;
-  }
+    @media (min-width: 601px) {
 
-  .container {
-    max-width: 1050px;
-  }
+      body {
+        padding: 24px;
+      }
 
-  header {
-    margin: 6px 4px 24px;
-  }
+      .container {
+        max-width: 1050px;
+      }
 
-  h1 {
-    font-size: 30px;
-  }
+      header {
+        margin: 6px 4px 24px;
+      }
 
-  .subtitle {
-    font-size: 14px;
-  }
+      h1 {
+        font-size: 30px;
+      }
 
-  /* 現在の気温 */
+      .subtitle {
+        font-size: 14px;
+      }
 
-  .main-temperature {
-    padding: 30px 20px;
-    margin-bottom: 16px;
-  }
+      /* 現在の気温 */
 
-  .main-temperature .temperature {
-    font-size: 72px;
-  }
+      .main-temperature {
+        padding: 30px 20px;
+        margin-bottom: 16px;
+      }
 
-  .main-temperature .label {
-    font-size: 16px;
-  }
+      .main-temperature .temperature {
+        font-size: 72px;
+      }
 
-  .observation-time {
-    font-size: 19px;
-    margin-bottom: 14px;
-  }
+      .main-temperature .label {
+        font-size: 16px;
+      }
 
-  /* 湿度・気圧 */
+      .observation-time {
+        font-size: 19px;
+        margin-bottom: 14px;
+      }
 
-  .current-grid {
-    gap: 16px;
-    margin-bottom: 16px;
-  }
+      /* 湿度・気圧 */
 
-  .current-card {
-    padding: 22px;
-    border-radius: 18px;
-  }
+      .current-grid {
+        gap: 16px;
+        margin-bottom: 16px;
+      }
 
-  .current-card .icon {
-    font-size: 26px;
-  }
+      .current-card {
+        padding: 22px;
+        border-radius: 18px;
+      }
 
-  .current-card .value {
-    font-size: 28px;
-  }
+      .current-card .icon {
+        font-size: 26px;
+      }
 
-  /* セクション */
+      .current-card .value {
+        font-size: 28px;
+      }
 
-  .section-title {
-    font-size: 18px;
-    margin-top: 28px;
-    margin-bottom: 12px;
-  }
+      /* セクション */
 
-  /* 今日 */
+      .section-title {
+        font-size: 18px;
+        margin-top: 28px;
+        margin-bottom: 12px;
+      }
 
-  .daily-grid {
-    gap: 16px;
-  }
+      /* 今日 */
 
-  .daily-card {
-    padding: 20px;
-    border-radius: 18px;
-  }
+      .daily-grid {
+        gap: 16px;
+      }
 
-  .daily-card .value {
-    font-size: 26px;
-  }
+      .daily-card {
+        padding: 20px;
+        border-radius: 18px;
+      }
 
-  .daily-card .time {
-    font-size: 13px;
-  }
+      .daily-card .value {
+        font-size: 26px;
+      }
 
-  /* 24時間前との比較 */
+      .daily-card .time {
+        font-size: 13px;
+      }
 
-  .comparison-card {
-    padding: 20px 24px;
-    border-radius: 18px;
-  }
+      /* 1時間前との比較 */
 
-  .comparison-row {
-    padding: 11px 0;
-  }
+      .comparison-card {
+        padding: 20px 24px;
+        border-radius: 18px;
+      }
 
-  .comparison-row span {
-    font-size: 15px;
-  }
+      .comparison-row {
+        padding: 11px 0;
+      }
 
-  .comparison-row strong {
-    font-size: 19px;
-  }
+      .comparison-row span {
+        font-size: 15px;
+      }
 
-  /* 月間ランキング */
+      .comparison-row strong {
+        font-size: 19px;
+      }
 
-  .ranking-grid {
-    gap: 16px;
-  }
+      /* 月間ランキング */
 
-  .ranking-card {
-    padding: 20px;
-    border-radius: 18px;
-  }
+      .ranking-grid {
+        gap: 16px;
+      }
 
-  .ranking-title {
-    font-size: 16px;
-  }
+      .ranking-card {
+        padding: 20px;
+        border-radius: 18px;
+      }
 
-  .ranking-row {
-    padding: 11px 0;
-  }
+      .ranking-title {
+        font-size: 16px;
+      }
 
-  /* グラフ */
+      .ranking-row {
+        padding: 11px 0;
+      }
 
-  .chart-card {
-    padding: 20px;
-    margin-top: 16px;
-    border-radius: 18px;
-  }
+      /* グラフ */
 
-  .chart-title {
-    font-size: 18px;
-  }
+      .chart-card {
+        padding: 20px;
+        margin-top: 16px;
+        border-radius: 18px;
+      }
 
-  .chart-wrapper {
-    height: 320px;
-  }
+      .chart-title {
+        font-size: 18px;
+      }
 
-}
+      .chart-wrapper {
+        height: 320px;
+      }
 
-
-/* ========================================
-   iPad・小型タブレット横向き以上
-   ======================================== */
-
-@media (min-width: 900px) {
-
-  .container {
-    max-width: 1100px;
-  }
-
-  /*
-   * 現在値を少しワイドに
-   */
-
-  .main-temperature {
-    padding: 32px 24px;
-  }
-
-  /*
-   * カードの余白を少し拡大
-   */
-
-  .current-card,
-  .daily-card,
-  .ranking-card {
-    padding: 22px;
-  }
-
-  /*
-   * グラフを横長に
-   */
-
-  .chart-wrapper {
-    height: 340px;
-  }
-
-}
+    }
 
 
-/* ========================================
-   大型PC
-   ======================================== */
+    /* ========================================
+       iPad・小型タブレット横向き以上
+       ======================================== */
 
-@media (min-width: 1200px) {
+    @media (min-width: 900px) {
 
-  body {
-    padding: 30px;
-  }
+      .container {
+        max-width: 1100px;
+      }
 
-  .container {
-    max-width: 1150px;
-  }
+      /*
+       * 現在値を少しワイドに
+       */
 
-  .main-temperature .temperature {
-    font-size: 76px;
-  }
+      .main-temperature {
+        padding: 32px 24px;
+      }
 
-  .chart-wrapper {
-    height: 360px;
-  }
+      /*
+       * カードの余白を少し拡大
+       */
 
-}
-    
+      .current-card,
+      .daily-card,
+      .ranking-card {
+        padding: 22px;
+      }
+
+      /*
+       * グラフを横長に
+       */
+
+      .chart-wrapper {
+        height: 340px;
+      }
+
+    }
+
+
+    /* ========================================
+       大型PC
+       ======================================== */
+
+    @media (min-width: 1200px) {
+
+      body {
+        padding: 30px;
+      }
+
+      .container {
+        max-width: 1150px;
+      }
+
+      .main-temperature .temperature {
+        font-size: 76px;
+      }
+
+      .chart-wrapper {
+        height: 360px;
+      }
+
+    }
+
   </style>
 
 </head>
@@ -790,10 +791,10 @@
   </div>
 
 
-  <!-- 24時間前との比較 -->
+  <!-- 1時間前との比較 -->
 
   <div class="section-title">
-    🕐 24時間前との比較
+    🕐 1時間前との比較
   </div>
 
   <div class="comparison-card">
@@ -801,10 +802,10 @@
     <div class="comparison-row">
 
       <span>
-        昨日同時刻の気温
+        1時間前の気温
       </span>
 
-      <strong id="yesterdayTemperature">
+      <strong id="oneHourAgoTemperature">
         --.-℃
       </strong>
 
@@ -1328,12 +1329,12 @@
 
 
     /*
-     * 24時間前との比較
+     * 1時間前との比較
      */
 
     const targetTime =
       now -
-      24 * 60 * 60 * 1000;
+      60 * 60 * 1000;
 
 
     let closest = null;
@@ -1373,9 +1374,18 @@
     });
 
 
+    /*
+     * 1時間前のデータが近い場合のみ使用
+     *
+     * historyは10分間隔なので、
+     * 通常は1時間前のデータが存在する。
+     */
+
     if (
       closest &&
-      currentData
+      currentData &&
+      closestDifference <=
+        15 * 60 * 1000
     ) {
 
       const currentTemperature =
@@ -1384,7 +1394,7 @@
         );
 
 
-      const yesterdayTemperature =
+      const oneHourAgoTemperature =
         parseFloat(
           closest.temperature
         );
@@ -1396,7 +1406,7 @@
         );
 
 
-      const yesterdayHumidity =
+      const oneHourAgoHumidity =
         parseFloat(
           closest.humidity
         );
@@ -1408,10 +1418,31 @@
         );
 
 
-      const yesterdayPressure =
+      const oneHourAgoPressure =
         parseFloat(
           closest.pressure
         );
+
+
+      /*
+       * 1時間前の気温
+       */
+
+      if (
+        !isNaN(
+          oneHourAgoTemperature
+        )
+      ) {
+
+        document.getElementById(
+          "oneHourAgoTemperature"
+        ).textContent =
+          oneHourAgoTemperature.toFixed(
+            1
+          ) +
+          "℃";
+
+      }
 
 
       /*
@@ -1423,28 +1454,19 @@
           currentTemperature
         ) &&
         !isNaN(
-          yesterdayTemperature
+          oneHourAgoTemperature
         )
       ) {
 
         const difference =
           currentTemperature -
-          yesterdayTemperature;
+          oneHourAgoTemperature;
 
 
         const sign =
           difference > 0
             ? "+"
             : "";
-
-
-        document.getElementById(
-          "yesterdayTemperature"
-        ).textContent =
-          yesterdayTemperature.toFixed(
-            1
-          ) +
-          "℃";
 
 
         document.getElementById(
@@ -1468,13 +1490,13 @@
           currentHumidity
         ) &&
         !isNaN(
-          yesterdayHumidity
+          oneHourAgoHumidity
         )
       ) {
 
         const difference =
           currentHumidity -
-          yesterdayHumidity;
+          oneHourAgoHumidity;
 
 
         const sign =
@@ -1504,13 +1526,13 @@
           currentPressure
         ) &&
         !isNaN(
-          yesterdayPressure
+          oneHourAgoPressure
         )
       ) {
 
         const difference =
           currentPressure -
-          yesterdayPressure;
+          oneHourAgoPressure;
 
 
         const sign =
