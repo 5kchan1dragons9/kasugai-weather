@@ -13,71 +13,310 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get JMA warning data
+
+      - name: Get JMA feed
         run: |
           curl -L \
             "https://www.data.jma.go.jp/developer/xml/feed/regular.xml" \
             -o jma-feed.xml
 
-      - name: Create warning data
+
+      - name: Get and parse warning data
         run: |
+
           python - <<'PY'
+
           import json
+          import urllib.request
           import xml.etree.ElementTree as ET
+          from datetime import datetime, timezone, timedelta
+
+
+          FEED_URL = "jma-feed.xml"
+
+          CITY_NAME = "春日井市"
+
+          CITY_CODE = "2320600"
+
 
           result = {
               "updated": "",
-              "message": "現在の情報を取得しています。",
+              "city": CITY_NAME,
+              "cityCode": CITY_CODE,
+              "status": "none",
+              "message": "現在、発表されている警報・注意報はありません。",
               "warnings": []
           }
 
-          try:
-              tree = ET.parse("jma-feed.xml")
-              root = tree.getroot()
 
-              ns = {
-                  "atom": "http://www.w3.org/2005/Atom"
-              }
+          # --------------------------------
+          # 現在時刻
+          # --------------------------------
 
-              entries = root.findall("atom:entry", ns)
+          JST = timezone(timedelta(hours=9))
 
-              for entry in entries:
-                  title = entry.find("atom:title", ns)
+          result["updated"] = datetime.now(JST).isoformat()
 
-                  if title is not None:
-                      text = title.text or ""
 
-                      if "気象警報・注意報" in text:
-                          result["warnings"].append(text)
+          # --------------------------------
+          # XML namespace
+          # --------------------------------
 
-              if result["warnings"]:
-                  result["message"] = "気象庁から注警報情報を取得しました。"
-              else:
-                  result["message"] = "現在、発表されている警報・注意報はありません。"
+          NS = {
+              "atom": "http://www.w3.org/2005/Atom"
+          }
 
-          except Exception as e:
-              result["message"] = "情報を取得できませんでした。"
 
-          with open("warning-data.json", "w", encoding="utf-8") as f:
+          # --------------------------------
+          # フィードを読む
+          # --------------------------------
+
+          feed = ET.parse(FEED_URL)
+
+          root = feed.getroot()
+
+
+          entries = root.findall(
+              "atom:entry",
+              NS
+          )
+
+
+          warning_urls = []
+
+
+          # --------------------------------
+          # 気象警報・注意報XMLを探す
+          # --------------------------------
+
+          for entry in entries:
+
+              title = entry.find(
+                  "atom:title",
+                  NS
+              )
+
+              if title is None:
+                  continue
+
+
+              title_text = title.text or ""
+
+
+              if "気象警報・注意報" not in title_text:
+                  continue
+
+
+              # R06系のみ対象
+
+              if "Ｒ０６" not in title_text:
+                  continue
+
+
+              for link in entry.findall(
+                  "atom:link",
+                  NS
+              ):
+
+                  href = link.attrib.get("href")
+
+                  if href:
+                      warning_urls.append(href)
+
+
+          # 重複削除
+
+          warning_urls = list(
+              dict.fromkeys(warning_urls)
+          )
+
+
+          # --------------------------------
+          # 各XMLを取得
+          # --------------------------------
+
+          for url in warning_urls:
+
+              try:
+
+                  with urllib.request.urlopen(
+                      url,
+                      timeout=20
+                  ) as response:
+
+                      xml_data = response.read()
+
+
+                  warning_root = ET.fromstring(
+                      xml_data
+                  )
+
+
+                  # XML全体を検索
+
+                  for elem in warning_root.iter():
+
+                      # 春日井市を含むAreaを探す
+
+                      if elem.tag.endswith("Area"):
+
+                          area_name = None
+                          area_code = None
+
+
+                          for child in elem:
+
+                              if child.tag.endswith("Name"):
+
+                                  if child.text:
+                                      area_name = child.text.strip()
+
+
+                              if child.tag.endswith("Code"):
+
+                                  if child.text:
+                                      area_code = child.text.strip()
+
+
+                          if (
+                              area_name != CITY_NAME
+                              and area_code != CITY_CODE
+                          ):
+
+                              continue
+
+
+                          # --------------------------------
+                          # Area内の警報・注意報を取得
+                          # --------------------------------
+
+                          for child in elem.iter():
+
+                              if not child.tag.endswith("Kind"):
+                                  continue
+
+
+                              name = None
+                              status = None
+
+
+                              for item in child:
+
+                                  if item.tag.endswith("Name"):
+
+                                      if item.text:
+                                          name = item.text.strip()
+
+
+                                  if item.tag.endswith("Status"):
+
+                                      if item.text:
+                                          status = item.text.strip()
+
+
+                              if not name:
+                                  continue
+
+
+                              # 発表・継続だけを採用
+
+                              if status not in (
+                                  "発表",
+                                  "継続"
+                              ):
+
+                                  continue
+
+
+                              # 同じ情報を重複登録しない
+
+                              exists = any(
+                                  w["name"] == name
+                                  for w in result["warnings"]
+                              )
+
+
+                              if not exists:
+
+                                  result["warnings"].append(
+                                      {
+                                          "name": name,
+                                          "status": status
+                                      }
+                                  )
+
+
+              except Exception as e:
+
+                  print(
+                      "XML取得エラー:",
+                      url,
+                      e
+                  )
+
+
+          # --------------------------------
+          # 結果判定
+          # --------------------------------
+
+          if result["warnings"]:
+
+              result["status"] = "active"
+
+              result["message"] = (
+                  "現在、春日井市に発表されている"
+                  "警報・注意報があります。"
+              )
+
+
+          else:
+
+              result["status"] = "none"
+
+              result["message"] = (
+                  "現在、春日井市に発表されている"
+                  "警報・注意報はありません。"
+              )
+
+
+          # --------------------------------
+          # 保存
+          # --------------------------------
+
+          with open(
+              "warning-data.json",
+              "w",
+              encoding="utf-8"
+          ) as f:
+
               json.dump(
                   result,
                   f,
                   ensure_ascii=False,
                   indent=2
               )
+
           PY
+
 
       - name: Commit warning data
         run: |
+
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
 
           git add warning-data.json
 
+
           git diff --cached --quiet || \
             git commit -m "Update warning data"
+
 
           git push
