@@ -92,6 +92,15 @@
       font-weight: 500;
     }
 
+    /* 気温変化 */
+
+    .temperature-trend {
+      margin-top: 9px;
+      font-size: 13px;
+      color: #777;
+      font-weight: 600;
+    }
+
     /* 湿度・気圧 */
 
     .current-grid {
@@ -427,6 +436,13 @@
         ℃
       </span>
 
+    </div>
+
+    <div
+      class="temperature-trend"
+      id="temperatureTrend"
+    >
+      1時間の変化：--
     </div>
 
   </div>
@@ -1124,24 +1140,29 @@
 
 
     /*
-     * 3時間前との気圧差
+     * 1時間前との気温差
      */
 
     if (currentData) {
 
-      const currentPressure =
+      const currentTemperature =
         parseFloat(
-          currentData.pressure
+          currentData.temperature
         );
+
 
       const targetTime =
         now -
-        3 * 60 * 60 * 1000;
+        1 * 60 * 60 * 1000;
 
-      let closestPressure = null;
 
-      let closestPressureDifference =
+      let closestTemperature =
+        null;
+
+
+      let closestTemperatureDifference =
         Infinity;
+
 
       history.forEach(item => {
 
@@ -1154,10 +1175,150 @@
             ":00+09:00"
           );
 
+
+        const itemTemperature =
+          parseFloat(
+            item.temperature
+          );
+
+
+        if (
+          isNaN(
+            itemTime.getTime()
+          ) ||
+          isNaN(
+            itemTemperature
+          )
+        ) {
+          return;
+        }
+
+
+        const difference =
+          Math.abs(
+            itemTime.getTime() -
+            targetTime
+          );
+
+
+        if (
+          difference <
+          closestTemperatureDifference
+        ) {
+
+          closestTemperatureDifference =
+            difference;
+
+          closestTemperature =
+            itemTemperature;
+
+        }
+
+      });
+
+
+      if (
+        !isNaN(
+          currentTemperature
+        ) &&
+        closestTemperature !== null
+      ) {
+
+        const temperatureDifference =
+          currentTemperature -
+          closestTemperature;
+
+
+        let arrow = "→";
+
+
+        /*
+         * 0.05℃を超えた場合に
+         * 上昇・下降と判定
+         */
+
+        if (
+          temperatureDifference >
+          0.05
+        ) {
+
+          arrow = "↗";
+
+        }
+        else if (
+          temperatureDifference <
+          -0.05
+        ) {
+
+          arrow = "↘";
+
+        }
+
+
+        const sign =
+          temperatureDifference > 0
+            ? "+"
+            : "";
+
+
+        document.getElementById(
+          "temperatureTrend"
+        ).textContent =
+          arrow +
+          " 1時間で " +
+          sign +
+          temperatureDifference.toFixed(
+            1
+          ) +
+          "℃";
+
+      }
+
+    }
+
+
+    /*
+     * 3時間前との気圧差
+     */
+
+    if (currentData) {
+
+      const currentPressure =
+        parseFloat(
+          currentData.pressure
+        );
+
+
+      const targetTime =
+        now -
+        3 * 60 * 60 * 1000;
+
+
+      let closestPressure =
+        null;
+
+
+      let closestPressureDifference =
+        Infinity;
+
+
+      history.forEach(item => {
+
+        const itemTime =
+          new Date(
+            item.time.replace(
+              " ",
+              "T"
+            ) +
+            ":00+09:00"
+          );
+
+
         const itemPressure =
           parseFloat(
             item.pressure
           );
+
 
         if (
           isNaN(
@@ -1170,11 +1331,13 @@
           return;
         }
 
+
         const difference =
           Math.abs(
             itemTime.getTime() -
             targetTime
           );
+
 
         if (
           difference <
@@ -1208,8 +1371,8 @@
 
 
         /*
-         * 0.1hPa未満は
-         * ほぼ変化なしとして扱う
+         * 0.05hPa未満は
+         * ほぼ変化なし
          */
 
         if (
@@ -1546,6 +1709,7 @@
 
 
     let closest = null;
+
 
     let closestDifference =
       Infinity;
