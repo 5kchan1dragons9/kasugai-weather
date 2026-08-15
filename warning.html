@@ -12,82 +12,215 @@
 
   <title>春日井市 注警報</title>
 
+
   <style>
 
     * {
       box-sizing: border-box;
     }
 
+
     html,
     body {
+
       margin: 0;
       padding: 0;
+
       width: 100%;
       height: 100%;
-      overflow: hidden;
+
+      overflow: auto;
+
       background: #fff4f4;
+
       font-family:
         -apple-system,
         BlinkMacSystemFont,
         "Helvetica Neue",
         Arial,
         sans-serif;
-    }
-
-
-    .header {
-
-      height: 58px;
-
-      display: flex;
-      align-items: center;
-
-      padding: 0 16px;
-
-      background: #fff4f4;
-
-      border-bottom: 1px solid #eadede;
 
     }
 
+
+    /* ================================
+       全体
+       ================================ */
+
+    .container {
+
+      padding: 20px;
+
+    }
+
+
+    /* ================================
+       タイトル
+       ================================ */
 
     .title {
 
-      font-size: 20px;
+      font-size: 22px;
+
       font-weight: 700;
+
+      margin-bottom: 18px;
 
     }
 
 
-    .source {
+    /* ================================
+       状態カード
+       ================================ */
 
-      margin-left: auto;
+    .status {
 
-      font-size: 12px;
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
+
+      text-align: center;
+
+      color: #555;
+
+      font-size: 16px;
+
+    }
+
+
+    /* ================================
+       発表なし
+       ================================ */
+
+    .status.none {
+
+      background: #f0f8f0;
+
+      color: #356b35;
+
+      border: 1px solid #d4e8d4;
+
+    }
+
+
+    /* ================================
+       警報・注意報一覧
+       ================================ */
+
+    .warning-list {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 12px;
+
+    }
+
+
+    /* ================================
+       警報カード
+       ================================ */
+
+    .warning-card {
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 18px 20px;
+
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.08);
+
+      border-left: 6px solid #d9534f;
+
+    }
+
+
+    .warning-card.warning {
+
+      background: #fff0f0;
+
+      border-left-color: #d9534f;
+
+    }
+
+
+    /* ================================
+       注意報カード
+       ================================ */
+
+    .warning-card.advisory {
+
+      background: #fff9e8;
+
+      border-left-color: #e0a800;
+
+    }
+
+
+    /* ================================
+       警報名
+       ================================ */
+
+    .warning-name {
+
+      font-size: 19px;
+
+      font-weight: 700;
+
+      color: #333;
+
+    }
+
+
+    /* ================================
+       状態
+       ================================ */
+
+    .warning-status {
+
+      margin-top: 6px;
+
+      font-size: 13px;
 
       color: #777;
 
     }
 
 
-    .content {
+    /* ================================
+       最終更新
+       ================================ */
 
-      width: 100%;
-      height: calc(100vh - 58px);
+    .updated {
 
-      background: white;
+      margin-top: 18px;
+
+      text-align: center;
+
+      color: #888;
+
+      font-size: 13px;
 
     }
 
 
-    iframe {
+    /* ================================
+       エラー
+       ================================ */
 
-      width: 100%;
-      height: 100%;
+    .error {
 
-      border: none;
+      background: #f5f5f5;
 
-      display: block;
+      color: #777;
 
     }
 
@@ -99,27 +232,317 @@
 <body>
 
 
-  <div class="header">
+  <div class="container">
+
+
+    <!-- タイトル -->
 
     <div class="title">
+
       ⚠️ 春日井市の注警報
+
     </div>
 
-    <div class="source">
-      気象庁
+
+    <!-- 表示エリア -->
+
+    <div id="content">
+
+      <div class="status">
+
+        現在の情報を取得しています。
+
+      </div>
+
     </div>
+
+
+    <!-- 更新時刻 -->
+
+    <div
+      class="updated"
+      id="updated"
+    >
+
+      情報取得中……
+
+    </div>
+
 
   </div>
 
 
-  <div class="content">
 
-    <iframe
-      src="https://www.data.jma.go.jp/multi/warn/warn_detail.html?code=230010&lang=jp"
-      title="気象庁 春日井市 注警報"
-    ></iframe>
+  <script>
 
-  </div>
+
+    /* ================================
+       注警報データ取得
+       ================================ */
+
+    async function loadWarningData() {
+
+
+      try {
+
+
+        /*
+         * GitHub Pagesのキャッシュを避けるため
+         * 現在時刻をURLに付加
+         */
+
+        const url =
+          "warning-data.json?t=" +
+          Date.now();
+
+
+        const response =
+          await fetch(url);
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            "データ取得エラー"
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        displayWarningData(data);
+
+
+      }
+
+
+      catch (error) {
+
+
+        console.error(
+          "注警報データ取得エラー:",
+          error
+        );
+
+
+        document.getElementById(
+          "content"
+        ).innerHTML = `
+
+          <div class="status error">
+
+            注警報情報を取得できませんでした。
+
+          </div>
+
+        `;
+
+
+        document.getElementById(
+          "updated"
+        ).textContent =
+          "データ取得エラー";
+
+      }
+
+    }
+
+
+
+    /* ================================
+       表示
+       ================================ */
+
+    function displayWarningData(data) {
+
+
+      const content =
+        document.getElementById(
+          "content"
+        );
+
+
+      const updated =
+        document.getElementById(
+          "updated"
+        );
+
+
+      /* --------------------------------
+         警報・注意報なし
+         -------------------------------- */
+
+      if (
+        !data.warnings ||
+        data.warnings.length === 0
+      ) {
+
+
+        content.innerHTML = `
+
+          <div class="status none">
+
+            ✓ 現在、発表されている
+            警報・注意報はありません。
+
+          </div>
+
+        `;
+
+      }
+
+
+      /* --------------------------------
+         警報・注意報あり
+         -------------------------------- */
+
+      else {
+
+
+        let html =
+          '<div class="warning-list">';
+
+
+        data.warnings.forEach(
+          function(item)
+          {
+
+
+            const name =
+              item.name || "";
+
+
+            const status =
+              item.status || "";
+
+
+            /*
+             * 「警報」を含む場合は警報扱い
+             * それ以外は注意報扱い
+             */
+
+            let className =
+              "warning-card advisory";
+
+
+            if (
+              name.includes("警報")
+            ) {
+
+              className =
+                "warning-card warning";
+
+            }
+
+
+            html += `
+
+              <div class="${className}">
+
+                <div class="warning-name">
+
+                  ${name}
+
+                </div>
+
+                <div class="warning-status">
+
+                  ${status}
+
+                </div>
+
+              </div>
+
+            `;
+
+          }
+        );
+
+
+        html +=
+          "</div>";
+
+
+        content.innerHTML =
+          html;
+
+      }
+
+
+      /* --------------------------------
+         更新時刻
+         -------------------------------- */
+
+      if (data.updated) {
+
+
+        try {
+
+
+          const date =
+            new Date(
+              data.updated
+            );
+
+
+          const formatted =
+            date.toLocaleString(
+              "ja-JP",
+              {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+              }
+            );
+
+
+          updated.textContent =
+            "最終更新：" +
+            formatted;
+
+
+        }
+
+
+        catch (error) {
+
+          updated.textContent =
+            "最終更新：" +
+            data.updated;
+
+        }
+
+      }
+
+
+    }
+
+
+
+    /* ================================
+       初回読み込み
+       ================================ */
+
+    loadWarningData();
+
+
+
+    /* ================================
+       1分ごとに更新
+       ================================ */
+
+    setInterval(
+      loadWarningData,
+      60 * 1000
+    );
+
+
+  </script>
 
 
 </body>
