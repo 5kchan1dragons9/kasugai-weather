@@ -190,124 +190,80 @@
 
     function showPage(page) {
 
-  document.body.classList.remove(
-    "outdoor",
-    "indoor"
-  );
-
-  document.body.classList.add(page);
-
-
   const outdoorPage =
-        document.getElementById(
-          "outdoorPage"
-        );
+    document.getElementById(
+      "outdoorPage"
+    );
+
+  const indoorPage =
+    document.getElementById(
+      "indoorPage"
+    );
+
+  const recordPage =
+    document.getElementById(
+      "recordPage"
+    );
+
+  const outdoorTab =
+    document.getElementById(
+      "outdoorTab"
+    );
+
+  const indoorTab =
+    document.getElementById(
+      "indoorTab"
+    );
+
+  const recordTab =
+    document.getElementById(
+      "recordTab"
+    );
 
 
-      const indoorPage =
-        document.getElementById(
-          "indoorPage"
-        );
+  /* いったん全部非表示 */
+
+  outdoorPage.classList.remove("active");
+  indoorPage.classList.remove("active");
+  recordPage.classList.remove("active");
+
+  outdoorTab.classList.remove("active");
+  indoorTab.classList.remove("active");
+  recordTab.classList.remove("active");
 
 
-      const outdoorTab =
-        document.getElementById(
-          "outdoorTab"
-        );
+  /* 選択されたページだけ表示 */
+
+  if (page === "outdoor") {
+
+    outdoorPage.classList.add("active");
+    outdoorTab.classList.add("active");
+
+    currentPage = "outdoor";
+
+  }
 
 
-      const indoorTab =
-        document.getElementById(
-          "indoorTab"
-        );
+  if (page === "indoor") {
 
-const recordPage =
-  document.getElementById(
-    "recordPage"
-  );
+    indoorPage.classList.add("active");
+    indoorTab.classList.add("active");
 
-const recordTab =
-  document.getElementById(
-    "recordTab"
-  );
+    currentPage = "indoor";
 
-      if (page === "outdoor") {
-
-        outdoorPage.classList.add(
-          "active"
-        );
-
-        indoorPage.classList.remove(
-          "active"
-        );
-
-        outdoorTab.classList.add(
-          "active"
-        );
-
-        indoorTab.classList.remove(
-          "active"
-        );
-
-        currentPage = "outdoor";
-
-      }
+  }
 
 
-      if (page === "indoor") {
+  if (page === "record") {
 
-        indoorPage.classList.add(
-          "active"
-        );
+    recordPage.classList.add("active");
+    recordTab.classList.add("active");
 
-        outdoorPage.classList.remove(
-          "active"
-        );
+    currentPage = "record";
 
-        indoorTab.classList.add(
-          "active"
-        );
-
-        outdoorTab.classList.remove(
-          "active"
-        );
-
-        currentPage = "indoor";
-
-      }
-
-if (page === "record") {
-
-  recordPage.classList.add(
-    "active"
-  );
-
-  outdoorPage.classList.remove(
-    "active"
-  );
-
-  indoorPage.classList.remove(
-    "active"
-  );
-
-  recordTab.classList.add(
-    "active"
-  );
-
-  outdoorTab.classList.remove(
-    "active"
-  );
-
-  indoorTab.classList.remove(
-    "active"
-  );
-
-  currentPage = "record";
+  }
 
 }
-      
-    }
-
 
 
     /* ================================
