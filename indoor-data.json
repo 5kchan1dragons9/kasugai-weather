@@ -1,10 +1,10 @@
 {
-  "temperature": 26.5,
-  "humidity": 48,
-  "pressure": 1011.8,
-  "co2": 1654,
-  "noise": 52,
+  "temperature": 26.6,
+  "humidity": 49,
+  "pressure": 1011.9,
+  "co2": 1551,
+  "noise": 55,
   "max_temp": 30.2,
   "min_temp": 26.2,
-  "updated": "2026-08-15 18:40"
+  "updated": "2026-08-15 18:50"
 }
