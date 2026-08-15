@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>春日井市 Weather Station - 記録</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #f3f5f7;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+      color: #333;
+    }
+
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+
+    .section-title {
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+
+    .date {
+      margin-bottom: 12px;
+      color: #777;
+      font-size: 14px;
+    }
+
+
+    .records {
+      display: grid;
+      grid-template-columns:
+        repeat(2, 1fr);
+      gap: 10px;
+    }
+
+
+    .record {
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.08);
+    }
+
+
+    .record-label {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 6px;
+    }
+
+
+    .record-value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+
+    .record-unit {
+      font-size: 14px;
+      margin-left: 3px;
+      font-weight: 400;
+    }
+
+
+    .monthly {
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      box-shadow:
+        0 2px 6px rgba(0,0,0,0.08);
+    }
+
+
+    .monthly-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+
+    .monthly-row:last-child {
+      border-bottom: none;
+    }
+
+
+    .monthly-label {
+      color: #666;
+      font-size: 14px;
+    }
+
+
+    .monthly-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+
+    @media (max-width: 500px) {
+
+      .container {
+        padding: 15px;
+      }
+
+      .records {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .record {
+        padding: 14px;
+      }
+
+      .record-value {
+        font-size: 21px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <div class="container">
+
+
+    <h1>📚 気象記録</h1>
+
+
+    <!-- ================================
+         今日の記録
+         ================================ -->
+
+    <div class="section">
+
+      <div class="section-title">
+        今日の記録
+      </div>
+
+
+      <div class="date">
+        2026年8月15日
+      </div>
+
+
+      <div class="records">
+
+
+        <div class="record">
+
+          <div class="record-label">
+            🌡️ 最高気温
+          </div>
+
+          <div class="record-value">
+            35.8
+            <span class="record-unit">℃</span>
+          </div>
+
+        </div>
+
+
+        <div class="record">
+
+          <div class="record-label">
+            🥶 最低気温
+          </div>
+
+          <div class="record-value">
+            25.1
+            <span class="record-unit">℃</span>
+          </div>
+
+        </div>
+
+
+        <div class="record">
+
+          <div class="record-label">
+            💧 最大湿度
+          </div>
+
+          <div class="record-value">
+            82
+            <span class="record-unit">%</span>
+          </div>
+
+        </div>
+
+
+        <div class="record">
+
+          <div class="record-label">
+            🌧️ 日降水量
+          </div>
+
+          <div class="record-value">
+            12.5
+            <span class="record-unit">mm</span>
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ================================
+         今月の記録
+         ================================ -->
+
+    <div class="section">
+
+      <div class="section-title">
+        📅 今月の記録
+      </div>
+
+
+      <div class="monthly">
+
+
+        <div class="monthly-row">
+
+          <div class="monthly-label">
+            🌡️ 月間最高気温
+          </div>
+
+          <div class="monthly-value">
+            36.8℃
+          </div>
+
+        </div>
+
+
+        <div class="monthly-row">
+
+          <div class="monthly-label">
+            🥶 月間最低気温
+          </div>
+
+          <div class="monthly-value">
+            22.4℃
+          </div>
+
+        </div>
+
+
+        <div class="monthly-row">
+
+          <div class="monthly-label">
+            🌧️ 最大日降水量
+          </div>
+
+          <div class="monthly-value">
+            48.5mm
+          </div>
+
+        </div>
+
+
+        <div class="monthly-row">
+
+          <div class="monthly-label">
+            💨 最大風速
+          </div>
+
+          <div class="monthly-value">
+            12.4m/s
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+</body>
+
+</html>
