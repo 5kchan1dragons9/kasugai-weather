@@ -129,6 +129,14 @@
       🏠 屋内
     </button>
 
+    <button
+  class="tab"
+  id="recordTab"
+  type="button"
+>
+  📚 記録
+</button>
+    
   </div>
 
 
@@ -153,6 +161,13 @@
       src="indoor.html"
       title="屋内"
     ></iframe>
+
+<iframe
+  id="recordPage"
+  class="page"
+  src="record.html"
+  title="記録"
+></iframe>
 
   </div>
 
@@ -206,7 +221,15 @@
           "indoorTab"
         );
 
+const recordPage =
+  document.getElementById(
+    "recordPage"
+  );
 
+const recordTab =
+  document.getElementById(
+    "recordTab"
+  );
 
       if (page === "outdoor") {
 
@@ -253,6 +276,36 @@
 
       }
 
+if (page === "record") {
+
+  recordPage.classList.add(
+    "active"
+  );
+
+  outdoorPage.classList.remove(
+    "active"
+  );
+
+  indoorPage.classList.remove(
+    "active"
+  );
+
+  recordTab.classList.add(
+    "active"
+  );
+
+  outdoorTab.classList.remove(
+    "active"
+  );
+
+  indoorTab.classList.remove(
+    "active"
+  );
+
+  currentPage = "record";
+
+}
+      
     }
 
 
@@ -284,7 +337,16 @@
         }
       );
 
+document
+  .getElementById("recordTab")
+  .addEventListener(
+    "click",
+    function() {
 
+      showPage("record");
+
+    }
+  );
 
     /* ================================
        iframe内部へのスワイプ検知
