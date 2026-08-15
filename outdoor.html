@@ -16,9 +16,9 @@
 
   <style>
 
-    html {
-      background: #dcefdc;
-    }
+html {
+  background: #dcefdc;
+}
 
     * {
       box-sizing: border-box;
@@ -44,8 +44,17 @@
 
     header {
       margin: 4px 2px 18px;
-      position: relative;
-      padding-right: 55px;
+    }
+
+    /* ================================
+       タイトル＋更新ボタン
+       ================================ */
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
     h1 {
@@ -54,77 +63,38 @@
       font-weight: 700;
     }
 
-    .subtitle {
-      margin-top: 5px;
-      color: #777;
-      font-size: 13px;
-    }
-
-
-    /* ================================
-       更新ボタン
-       ================================ */
-
     .refresh-button {
-
-      position: absolute;
-
-      top: 0;
-      right: 0;
-
-      width: 44px;
-      height: 44px;
-
-      border: none;
-
-      border-radius: 50%;
-
-      background: rgba(255,255,255,0.85);
-
-      color: #555;
-
-      font-size: 25px;
-
-      line-height: 44px;
-
-      text-align: center;
-
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
       padding: 0;
-
+      border: none;
+      border-radius: 50%;
+      background: white;
+      color: #555;
+      font-size: 18px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-
-      box-shadow:
-        0 2px 7px rgba(0,0,0,0.10);
-
-      -webkit-tap-highlight-color:
-        transparent;
-
-      transition:
-        background 0.2s,
-        transform 0.2s;
-
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      -webkit-tap-highlight-color: transparent;
     }
-
 
     .refresh-button:active {
-
-      background: #ffffff;
-
       transform: scale(0.92);
-
     }
 
-
-    .refresh-button.refreshing {
-
-      animation:
-        refresh-spin 0.8s linear infinite;
-
+    .refresh-button:disabled {
+      opacity: 0.5;
     }
 
+    .refresh-button.loading {
+      animation: refresh-spin 0.8s linear infinite;
+    }
 
     @keyframes refresh-spin {
-
       from {
         transform: rotate(0deg);
       }
@@ -132,9 +102,13 @@
       to {
         transform: rotate(360deg);
       }
-
     }
 
+    .subtitle {
+      margin-top: 5px;
+      color: #777;
+      font-size: 13px;
+    }
 
     /* 観測時刻 */
 
@@ -441,6 +415,12 @@
         font-size: 24px;
       }
 
+      .refresh-button {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+
       .main-temperature {
         padding: 23px 15px;
       }
@@ -496,6 +476,12 @@
 
       .subtitle {
         font-size: 14px;
+      }
+
+      .refresh-button {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
       }
 
       .main-temperature {
@@ -670,21 +656,24 @@
 
   <header>
 
-    <h1>🌤️ 百葉箱（屋外）のデータ</h1>
+    <div class="header-row">
+
+      <h1>🌤️ 百葉箱（屋外）のデータ</h1>
+
+      <button
+        id="refreshButton"
+        class="refresh-button"
+        type="button"
+        aria-label="屋外データを更新"
+      >
+        🔄
+      </button>
+
+    </div>
 
     <div class="subtitle">
       Netatmo Weather Station
     </div>
-
-    <button
-      id="refreshButton"
-      class="refresh-button"
-      type="button"
-      aria-label="最新データに更新"
-      title="最新データに更新"
-    >
-      ↻
-    </button>
 
   </header>
 
@@ -1037,48 +1026,22 @@
 
 <script>
 
+  /*
+   * ========================================
+   * 更新ボタン
+   * ========================================
+   */
 
-  /* ================================
-     手動更新ボタン
-     ================================ */
-
-  document
-    .getElementById("refreshButton")
-    .addEventListener(
-      "click",
-      function() {
-
-        const button =
-          document.getElementById(
-            "refreshButton"
-          );
-
-
-        button.classList.add(
-          "refreshing"
-        );
-
-
-        /*
-         * 少しだけ回転表示を見せてから
-         * ページを再読み込み
-         */
-
-        setTimeout(
-          function() {
-
-            location.reload();
-
-          },
-          300
-        );
-
-      }
+  const refreshButton =
+    document.getElementById(
+      "refreshButton"
     );
 
 
   /*
+   * ========================================
    * 10分ごとにページを自動更新
+   * ========================================
    */
 
   setTimeout(
@@ -1088,150 +1051,196 @@
 
 
   /*
+   * ========================================
    * 現在データ
+   * ========================================
    */
 
   let currentData = null;
 
 
-  fetch(
-    "data.json?cache=" +
-    Date.now()
-  )
+  function loadCurrentData() {
 
-  .then(response => {
+    return fetch(
+      "data.json?cache=" +
+      Date.now()
+    )
 
-    if (!response.ok) {
-      throw new Error(
-        "data.json error"
-      );
-    }
+    .then(response => {
 
-    return response.json();
+      if (!response.ok) {
+        throw new Error(
+          "data.json error"
+        );
+      }
 
-  })
+      return response.json();
 
-  .then(data => {
+    })
 
-    currentData = data;
+    .then(data => {
 
-
-    /*
-     * 現在値
-     */
-
-    document.getElementById(
-      "temperature"
-    ).textContent =
-      parseFloat(
-        data.temperature
-      ).toFixed(1);
-
-
-    document.getElementById(
-      "humidity"
-    ).textContent =
-      data.humidity;
-
-
-    document.getElementById(
-      "pressure"
-    ).textContent =
-      data.pressure;
-
-
-    /*
-     * 今日の最高・最低
-     */
-
-    document.getElementById(
-      "max_temp"
-    ).textContent =
-      parseFloat(
-        data.max_temp
-      ).toFixed(1);
-
-
-    document.getElementById(
-      "min_temp"
-    ).textContent =
-      parseFloat(
-        data.min_temp
-      ).toFixed(1);
-
-
-    /*
-     * 更新時刻
-     */
-
-    document.getElementById(
-      "updated"
-    ).textContent =
-      data.updated;
-
-
-    /*
-     * 観測日・時刻
-     */
-
-    const updatedDate =
-      new Date(
-        data.updated.replace(
-          " ",
-          "T"
-        ) +
-        ":00+09:00"
-      );
-
-
-    if (
-      !isNaN(
-        updatedDate.getTime()
-      )
-    ) {
-
-      document.getElementById(
-        "observationDate"
-      ).textContent =
-        (updatedDate.getMonth() + 1) +
-        "月" +
-        updatedDate.getDate() +
-        "日";
+      currentData = data;
 
 
       document.getElementById(
-        "observationTime"
+        "temperature"
       ).textContent =
-        String(
-          updatedDate.getHours()
-        ).padStart(2, "0") +
-        ":" +
-        String(
-          updatedDate.getMinutes()
-        ).padStart(2, "0");
-
-    }
-
-  })
-
-  .catch(error => {
-
-    console.error(
-      "データ取得エラー:",
-      error
-    );
+        parseFloat(
+          data.temperature
+        ).toFixed(1);
 
 
-    document.getElementById(
-      "errorMessage"
-    ).style.display =
-      "block";
+      document.getElementById(
+        "humidity"
+      ).textContent =
+        data.humidity;
 
-  });
+
+      document.getElementById(
+        "pressure"
+      ).textContent =
+        data.pressure;
+
+
+      document.getElementById(
+        "max_temp"
+      ).textContent =
+        parseFloat(
+          data.max_temp
+        ).toFixed(1);
+
+
+      document.getElementById(
+        "min_temp"
+      ).textContent =
+        parseFloat(
+          data.min_temp
+        ).toFixed(1);
+
+
+      document.getElementById(
+        "updated"
+      ).textContent =
+        data.updated;
+
+
+      const updatedDate =
+        new Date(
+          data.updated.replace(
+            " ",
+            "T"
+          ) +
+          ":00+09:00"
+        );
+
+
+      if (
+        !isNaN(
+          updatedDate.getTime()
+        )
+      ) {
+
+        document.getElementById(
+          "observationDate"
+        ).textContent =
+          (updatedDate.getMonth() + 1) +
+          "月" +
+          updatedDate.getDate() +
+          "日";
+
+
+        document.getElementById(
+          "observationTime"
+        ).textContent =
+          String(
+            updatedDate.getHours()
+          ).padStart(2, "0") +
+          ":" +
+          String(
+            updatedDate.getMinutes()
+          ).padStart(2, "0");
+
+      }
+
+    })
+
+    .catch(error => {
+
+      console.error(
+        "データ取得エラー:",
+        error
+      );
+
+
+      document.getElementById(
+        "errorMessage"
+      ).style.display =
+        "block";
+
+      throw error;
+
+    });
+
+  }
 
 
   /*
+   * 初回現在データ取得
+   */
+
+  loadCurrentData()
+    .catch(() => {});
+
+
+  /*
+   * ========================================
+   * 屋外ページ手動更新
+   * ========================================
+   */
+
+  refreshButton.addEventListener(
+    "click",
+    async () => {
+
+      refreshButton.disabled = true;
+
+      refreshButton.classList.add(
+        "loading"
+      );
+
+
+      try {
+
+        await loadCurrentData();
+
+        /*
+         * 履歴・daily・グラフも含めて
+         * 最新状態にするためページを再読み込み
+         */
+
+        location.reload();
+
+      }
+
+      catch (error) {
+
+        refreshButton.disabled = false;
+
+        refreshButton.classList.remove(
+          "loading"
+        );
+
+      }
+
+    }
+  );
+
+
+  /*
+   * ========================================
    * 履歴データ
+   * ========================================
    */
 
   fetch(
@@ -1313,10 +1322,6 @@
         }
       );
 
-
-    /*
-     * 気温24時間グラフ
-     */
 
     new Chart(
 
@@ -1760,7 +1765,9 @@
             )
           );
 
-        } else {
+        }
+
+        else {
 
           yesterdayTemperatures.push(
             null
@@ -1911,7 +1918,9 @@
 
 
   /*
+   * ========================================
    * daily.json
+   * ========================================
    */
 
   fetch(
