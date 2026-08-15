@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>春日井市の気象</title>
 
@@ -92,15 +98,6 @@
       font-weight: 500;
     }
 
-    /* 気温変化 */
-
-    .temperature-trend {
-      margin-top: 9px;
-      font-size: 13px;
-      color: #777;
-      font-weight: 600;
-    }
-
     /* 湿度・気圧 */
 
     .current-grid {
@@ -132,15 +129,6 @@
       color: #777;
       font-size: 12px;
       margin-top: 2px;
-    }
-
-    /* 気圧変化 */
-
-    .pressure-trend {
-      margin-top: 7px;
-      font-size: 12px;
-      color: #777;
-      font-weight: 600;
     }
 
     /* セクションタイトル */
@@ -176,22 +164,6 @@
     .daily-card .value {
       font-size: 23px;
       font-weight: 700;
-    }
-
-    .daily-card .time {
-      color: #777;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    /* 三角マーク */
-
-    .max-triangle {
-      color: #e53935;
-    }
-
-    .min-triangle {
-      color: #1976d2;
     }
 
     /* 過去24時間 */
@@ -252,6 +224,66 @@
       font-size: 18px;
     }
 
+    /* 月間ランキング */
+
+    .ranking-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .ranking-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 9px rgba(0,0,0,0.07);
+    }
+
+    .ranking-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .ranking-row {
+      display: flex;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #eee;
+      gap: 7px;
+    }
+
+    .ranking-row:last-child {
+      border-bottom: none;
+    }
+
+    .ranking-rank {
+      width: 25px;
+      font-size: 17px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .ranking-temp {
+      font-size: 17px;
+      font-weight: 700;
+      min-width: 62px;
+    }
+
+    .ranking-date {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .ranking-empty {
+      color: #888;
+      font-size: 13px;
+      text-align: center;
+      padding: 12px 0;
+    }
+
     /* グラフ */
 
     .chart-card {
@@ -266,41 +298,6 @@
       font-size: 17px;
       font-weight: 700;
       margin-bottom: 12px;
-    }
-
-    /* 今日の最高・最低 */
-
-    .chart-summary {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-      padding: 10px 12px;
-      background: #f7f8fa;
-      border-radius: 12px;
-      font-size: 13px;
-    }
-
-    .chart-summary-item {
-      flex: 1;
-      text-align: center;
-    }
-
-    .chart-summary-label {
-      color: #777;
-      font-size: 12px;
-      margin-bottom: 3px;
-    }
-
-    .chart-summary-value {
-      font-size: 17px;
-      font-weight: 700;
-    }
-
-    .chart-summary-time {
-      color: #777;
-      font-size: 11px;
-      margin-top: 2px;
     }
 
     .chart-wrapper {
@@ -366,12 +363,8 @@
         height: 240px;
       }
 
-      .chart-summary {
-        padding: 9px 6px;
-      }
-
-      .chart-summary-value {
-        font-size: 16px;
+      .ranking-grid {
+        grid-template-columns: 1fr;
       }
 
     }
@@ -438,13 +431,6 @@
 
     </div>
 
-    <div
-      class="temperature-trend"
-      id="temperatureTrend"
-    >
-      1時間の変化：--
-    </div>
-
   </div>
 
 
@@ -495,13 +481,6 @@
         気圧
       </div>
 
-      <div
-        class="pressure-trend"
-        id="pressureTrend"
-      >
-        3時間の変化：--
-      </div>
-
     </div>
 
   </div>
@@ -518,8 +497,7 @@
     <div class="daily-card">
 
       <div class="label">
-        <span class="max-triangle">▲</span>
-        最高気温
+        🔺 最高気温
       </div>
 
       <div class="value">
@@ -532,21 +510,13 @@
 
       </div>
 
-      <div class="time">
-
-        <span id="max_temp_time">
-          --:--
-        </span>
-
-      </div>
-
     </div>
 
 
     <div class="daily-card">
 
       <div class="label">
-        <span class="min-triangle">▼</span>
+        <span style="color:#2878d0;">▼</span>
         最低気温
       </div>
 
@@ -557,14 +527,6 @@
         </span>
 
         ℃
-
-      </div>
-
-      <div class="time">
-
-        <span id="min_temp_time">
-          --:--
-        </span>
 
       </div>
 
@@ -584,8 +546,7 @@
     <div class="history-card">
 
       <div class="label">
-        <span class="max-triangle">▲</span>
-        最高気温
+        🔺 最高気温
       </div>
 
       <div class="value">
@@ -604,7 +565,7 @@
     <div class="history-card">
 
       <div class="label">
-        <span class="min-triangle">▼</span>
+        <span style="color:#2878d0;">▼</span>
         最低気温
       </div>
 
@@ -685,61 +646,61 @@
   </div>
 
 
+  <!-- 月間ランキング -->
+
+  <div class="section-title">
+    📊 <span id="rankingMonth">今月</span>の気温記録
+  </div>
+
+  <div class="ranking-grid">
+
+    <!-- 最高気温 -->
+
+    <div class="ranking-card">
+
+      <div class="ranking-title">
+        🔺 最高気温 TOP 3
+      </div>
+
+      <div id="maxRanking">
+
+        <div class="ranking-empty">
+          データを取得中...
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 最低気温 -->
+
+    <div class="ranking-card">
+
+      <div class="ranking-title">
+        <span style="color:#2878d0;">▼</span>
+        最低気温 TOP 3
+      </div>
+
+      <div id="minRanking">
+
+        <div class="ranking-empty">
+          データを取得中...
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
   <!-- 気温グラフ -->
 
   <div class="chart-card">
 
     <div class="chart-title">
       🌡️ 気温（24時間）
-    </div>
-
-    <div class="chart-summary">
-
-      <div class="chart-summary-item">
-
-        <div class="chart-summary-label">
-          <span class="max-triangle">▲</span>
-          今日の最高
-        </div>
-
-        <div class="chart-summary-value">
-          <span id="chartMaxTemp">
-            --.-
-          </span>
-          ℃
-        </div>
-
-        <div class="chart-summary-time">
-          <span id="chartMaxTime">
-            --:--
-          </span>
-        </div>
-
-      </div>
-
-
-      <div class="chart-summary-item">
-
-        <div class="chart-summary-label">
-          <span class="min-triangle">▼</span>
-          今日の最低
-        </div>
-
-        <div class="chart-summary-value">
-          <span id="chartMinTemp">
-            --.-
-          </span>
-          ℃
-        </div>
-
-        <div class="chart-summary-time">
-          <span id="chartMinTime">
-            --:--
-          </span>
-        </div>
-
-      </div>
-
     </div>
 
     <div class="chart-wrapper">
@@ -871,94 +832,6 @@
       "min_temp"
     ).textContent =
       data.min_temp;
-
-
-    /*
-     * 最高・最低気温の発生時刻
-     */
-
-    if (data.date_max_temp) {
-
-      const maxDate =
-        new Date(
-          data.date_max_temp.replace(
-            " ",
-            "T"
-          ) +
-          ":00+09:00"
-        );
-
-      if (!isNaN(maxDate.getTime())) {
-
-        const maxTime =
-          String(
-            maxDate.getHours()
-          ).padStart(2, "0") +
-          ":" +
-          String(
-            maxDate.getMinutes()
-          ).padStart(2, "0");
-
-        document.getElementById(
-          "max_temp_time"
-        ).textContent =
-          maxTime;
-
-        document.getElementById(
-          "chartMaxTemp"
-        ).textContent =
-          data.max_temp;
-
-        document.getElementById(
-          "chartMaxTime"
-        ).textContent =
-          maxTime;
-
-      }
-
-    }
-
-
-    if (data.date_min_temp) {
-
-      const minDate =
-        new Date(
-          data.date_min_temp.replace(
-            " ",
-            "T"
-          ) +
-          ":00+09:00"
-        );
-
-      if (!isNaN(minDate.getTime())) {
-
-        const minTime =
-          String(
-            minDate.getHours()
-          ).padStart(2, "0") +
-          ":" +
-          String(
-            minDate.getMinutes()
-          ).padStart(2, "0");
-
-        document.getElementById(
-          "min_temp_time"
-        ).textContent =
-          minTime;
-
-        document.getElementById(
-          "chartMinTemp"
-        ).textContent =
-          data.min_temp;
-
-        document.getElementById(
-          "chartMinTime"
-        ).textContent =
-          minTime;
-
-      }
-
-    }
 
 
     /*
@@ -1135,282 +1008,6 @@
         Math.min(
           ...temperatures
         ).toFixed(1);
-
-    }
-
-
-    /*
-     * 1時間前との気温差
-     */
-
-    if (currentData) {
-
-      const currentTemperature =
-        parseFloat(
-          currentData.temperature
-        );
-
-
-      const targetTime =
-        now -
-        1 * 60 * 60 * 1000;
-
-
-      let closestTemperature =
-        null;
-
-
-      let closestTemperatureDifference =
-        Infinity;
-
-
-      history.forEach(item => {
-
-        const itemTime =
-          new Date(
-            item.time.replace(
-              " ",
-              "T"
-            ) +
-            ":00+09:00"
-          );
-
-
-        const itemTemperature =
-          parseFloat(
-            item.temperature
-          );
-
-
-        if (
-          isNaN(
-            itemTime.getTime()
-          ) ||
-          isNaN(
-            itemTemperature
-          )
-        ) {
-          return;
-        }
-
-
-        const difference =
-          Math.abs(
-            itemTime.getTime() -
-            targetTime
-          );
-
-
-        if (
-          difference <
-          closestTemperatureDifference
-        ) {
-
-          closestTemperatureDifference =
-            difference;
-
-          closestTemperature =
-            itemTemperature;
-
-        }
-
-      });
-
-
-      if (
-        !isNaN(
-          currentTemperature
-        ) &&
-        closestTemperature !== null
-      ) {
-
-        const temperatureDifference =
-          currentTemperature -
-          closestTemperature;
-
-
-        let arrow = "→";
-
-
-        /*
-         * 0.05℃を超えた場合に
-         * 上昇・下降と判定
-         */
-
-        if (
-          temperatureDifference >
-          0.05
-        ) {
-
-          arrow = "↗";
-
-        }
-        else if (
-          temperatureDifference <
-          -0.05
-        ) {
-
-          arrow = "↘";
-
-        }
-
-
-        const sign =
-          temperatureDifference > 0
-            ? "+"
-            : "";
-
-
-        document.getElementById(
-          "temperatureTrend"
-        ).textContent =
-          arrow +
-          " 1時間で " +
-          sign +
-          temperatureDifference.toFixed(
-            1
-          ) +
-          "℃";
-
-      }
-
-    }
-
-
-    /*
-     * 3時間前との気圧差
-     */
-
-    if (currentData) {
-
-      const currentPressure =
-        parseFloat(
-          currentData.pressure
-        );
-
-
-      const targetTime =
-        now -
-        3 * 60 * 60 * 1000;
-
-
-      let closestPressure =
-        null;
-
-
-      let closestPressureDifference =
-        Infinity;
-
-
-      history.forEach(item => {
-
-        const itemTime =
-          new Date(
-            item.time.replace(
-              " ",
-              "T"
-            ) +
-            ":00+09:00"
-          );
-
-
-        const itemPressure =
-          parseFloat(
-            item.pressure
-          );
-
-
-        if (
-          isNaN(
-            itemTime.getTime()
-          ) ||
-          isNaN(
-            itemPressure
-          )
-        ) {
-          return;
-        }
-
-
-        const difference =
-          Math.abs(
-            itemTime.getTime() -
-            targetTime
-          );
-
-
-        if (
-          difference <
-          closestPressureDifference
-        ) {
-
-          closestPressureDifference =
-            difference;
-
-          closestPressure =
-            itemPressure;
-
-        }
-
-      });
-
-
-      if (
-        !isNaN(
-          currentPressure
-        ) &&
-        closestPressure !== null
-      ) {
-
-        const pressureDifference =
-          currentPressure -
-          closestPressure;
-
-
-        let arrow = "→";
-
-
-        /*
-         * 0.05hPa未満は
-         * ほぼ変化なし
-         */
-
-        if (
-          pressureDifference >
-          0.05
-        ) {
-
-          arrow = "↗";
-
-        }
-        else if (
-          pressureDifference <
-          -0.05
-        ) {
-
-          arrow = "↘";
-
-        }
-
-
-        const sign =
-          pressureDifference > 0
-            ? "+"
-            : "";
-
-
-        document.getElementById(
-          "pressureTrend"
-        ).textContent =
-          arrow +
-          " 3時間で " +
-          sign +
-          pressureDifference.toFixed(
-            1
-          ) +
-          " hPa";
-
-      }
 
     }
 
@@ -1710,7 +1307,6 @@
 
     let closest = null;
 
-
     let closestDifference =
       Infinity;
 
@@ -1920,7 +1516,317 @@
 
   });
 
+
+  /*
+   * 月間ランキング
+   */
+
+  fetch(
+    "daily.json?cache=" +
+    Date.now()
+  )
+
+  .then(response => {
+
+    if (!response.ok) {
+
+      throw new Error(
+        "daily.json error"
+      );
+
+    }
+
+    return response.json();
+
+  })
+
+  .then(daily => {
+
+    if (
+      !daily ||
+      daily.length === 0
+    ) {
+
+      return;
+
+    }
+
+
+    /*
+     * 現在の年月
+     */
+
+    const now =
+      new Date();
+
+    const year =
+      now.getFullYear();
+
+    const month =
+      now.getMonth() + 1;
+
+
+    /*
+     * 月表示
+     */
+
+    document.getElementById(
+      "rankingMonth"
+    ).textContent =
+      month + "月";
+
+
+    /*
+     * 今月のデータだけ抽出
+     */
+
+    const prefix =
+      year +
+      "-" +
+      String(month).padStart(
+        2,
+        "0"
+      );
+
+
+    const monthly =
+      daily.filter(item =>
+        item.date &&
+        item.date.startsWith(
+          prefix
+        )
+      );
+
+
+    /*
+     * 最高気温ランキング
+     */
+
+    const maxRanking =
+      monthly
+
+        .filter(item =>
+          item.max_temp !== null &&
+          item.max_temp !== undefined
+        )
+
+        .sort(
+          (a, b) =>
+            parseFloat(
+              b.max_temp
+            ) -
+            parseFloat(
+              a.max_temp
+            )
+        )
+
+        .slice(0, 3);
+
+
+    /*
+     * 最低気温ランキング
+     */
+
+    const minRanking =
+      monthly
+
+        .filter(item =>
+          item.min_temp !== null &&
+          item.min_temp !== undefined
+        )
+
+        .sort(
+          (a, b) =>
+            parseFloat(
+              a.min_temp
+            ) -
+            parseFloat(
+              b.min_temp
+            )
+        )
+
+        .slice(0, 3);
+
+
+    /*
+     * 日付表示
+     */
+
+    function formatDate(
+      dateString
+    ) {
+
+      const parts =
+        dateString.split(
+          "-"
+        );
+
+      return (
+        parseInt(parts[1], 10) +
+        "月" +
+        parseInt(parts[2], 10) +
+        "日"
+      );
+
+    }
+
+
+    /*
+     * ランキング表示
+     */
+
+    function createRanking(
+      items,
+      valueKey,
+      timeKey
+    ) {
+
+      if (
+        items.length === 0
+      ) {
+
+        return `
+          <div class="ranking-empty">
+            データがありません
+          </div>
+        `;
+
+      }
+
+
+      const medals = [
+        "🥇",
+        "🥈",
+        "🥉"
+      ];
+
+
+      return items.map(
+        (item, index) => {
+
+          let timeText = "";
+
+
+          if (
+            item[timeKey]
+          ) {
+
+            const timeParts =
+              item[
+                timeKey
+              ].split(
+                " "
+              );
+
+
+            if (
+              timeParts.length >= 2
+            ) {
+
+              timeText =
+                timeParts[1];
+
+            }
+
+          }
+
+
+          return `
+
+            <div class="ranking-row">
+
+              <div class="ranking-rank">
+                ${medals[index]}
+              </div>
+
+              <div class="ranking-temp">
+                ${parseFloat(
+                  item[valueKey]
+                ).toFixed(1)}℃
+              </div>
+
+              <div class="ranking-date">
+
+                ${formatDate(
+                  item.date
+                )}
+
+                ${timeText}
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      ).join("");
+
+    }
+
+
+    /*
+     * 最高気温ランキングを表示
+     */
+
+    document.getElementById(
+      "maxRanking"
+    ).innerHTML =
+      createRanking(
+        maxRanking,
+        "max_temp",
+        "max_temp_time"
+      );
+
+
+    /*
+     * 最低気温ランキングを表示
+     */
+
+    document.getElementById(
+      "minRanking"
+    ).innerHTML =
+      createRanking(
+        minRanking,
+        "min_temp",
+        "min_temp_time"
+      );
+
+  })
+
+  .catch(error => {
+
+    console.error(
+      "月間ランキング取得エラー:",
+      error
+    );
+
+
+    document.getElementById(
+      "maxRanking"
+    ).innerHTML = `
+
+      <div class="ranking-empty">
+        データを取得できませんでした
+      </div>
+
+    `;
+
+
+    document.getElementById(
+      "minRanking"
+    ).innerHTML = `
+
+      <div class="ranking-empty">
+        データを取得できませんでした
+      </div>
+
+    `;
+
+  });
+
 </script>
 
 </body>
+
 </html>
