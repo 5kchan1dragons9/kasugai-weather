@@ -35,139 +35,69 @@
     }
 
 
-    /* =========================
+    /* ================================
        上部タブ
-       ========================= */
+       ================================ */
 
     .tabs {
-
       display: flex;
-
       width: 100%;
       height: 54px;
-
       background: white;
-
-      border-bottom:
-        1px solid #ddd;
-
-      box-shadow:
-        0 2px 6px
-        rgba(0,0,0,0.08);
-
+      border-bottom: 1px solid #ddd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       position: relative;
-
-      z-index: 20;
-
+      z-index: 10;
     }
 
 
     .tab {
-
       flex: 1;
-
       border: none;
-
       background: white;
-
       color: #777;
-
       font-size: 16px;
-
       font-weight: 600;
-
       cursor: pointer;
 
-      -webkit-tap-highlight-color:
-        transparent;
-
+      -webkit-tap-highlight-color: transparent;
     }
 
 
     .tab.active {
-
       color: #222;
-
       background: #f3f5f7;
-
-      box-shadow:
-        inset 0 -3px 0 #222;
-
+      box-shadow: inset 0 -3px 0 #222;
     }
 
 
-    /* =========================
-       スライド領域
-       ========================= */
-
-    .slider {
-
-      position: relative;
-
-      width: 100%;
-
-      height:
-        calc(100vh - 54px);
-
-      overflow: hidden;
-
-      touch-action: pan-y;
-
-    }
-
+    /* ================================
+       ページ
+       ================================ */
 
     .pages {
-
-      display: flex;
-
-      width: 200%;
-
-      height: 100%;
-
-      transition:
-        transform 0.28s
-        ease-out;
-
-      will-change:
-        transform;
-
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 54px);
+      overflow: hidden;
     }
 
 
     .page {
-
-      display: block;
-
-      flex: 0 0 50%;
-
-      width: 50%;
-
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
-
       border: none;
-
+      background: #f3f5f7;
     }
 
 
-    /* 屋外 */
-
-    .pages.outdoor {
-
-      transform:
-        translateX(0);
-
+    .page.active {
+      display: block;
     }
-
-
-    /* 屋内 */
-
-    .pages.indoor {
-
-      transform:
-        translateX(-50%);
-
-    }
-
 
   </style>
 
@@ -177,16 +107,16 @@
 <body>
 
 
-  <!-- =========================
+  <!-- ================================
        タブ
-       ========================= -->
+       ================================ -->
 
   <div class="tabs">
 
     <button
       class="tab active"
       id="outdoorTab"
-      onclick="showPage('outdoor')"
+      type="button"
     >
       🌤️ 屋外
     </button>
@@ -195,7 +125,7 @@
     <button
       class="tab"
       id="indoorTab"
-      onclick="showPage('indoor')"
+      type="button"
     >
       🏠 屋内
     </button>
@@ -204,34 +134,26 @@
 
 
 
-  <!-- =========================
-       スライド領域
-       ========================= -->
+  <!-- ================================
+       ページ
+       ================================ -->
 
-  <div
-    class="slider"
-    id="slider"
-  >
+  <div class="pages">
 
-    <div
-      class="pages outdoor"
-      id="pages"
-    >
-
-      <iframe
-        id="outdoorPage"
-        class="page"
-        src="outdoor.html"
-      ></iframe>
+    <iframe
+      id="outdoorPage"
+      class="page active"
+      src="outdoor.html"
+      title="屋外"
+    ></iframe>
 
 
-      <iframe
-        id="indoorPage"
-        class="page"
-        src="indoor.html"
-      ></iframe>
-
-    </div>
+    <iframe
+      id="indoorPage"
+      class="page"
+      src="indoor.html"
+      title="屋内"
+    ></iframe>
 
   </div>
 
@@ -240,54 +162,55 @@
   <script>
 
 
-    /* =========================
-       現在のページ
-       ========================= */
+    /* ================================
+       現在表示しているページ
+       ================================ */
 
-    let currentPage =
-      "outdoor";
-
-
-    const pages =
-      document.getElementById(
-        "pages"
-      );
+    let currentPage = "outdoor";
 
 
-    const outdoorTab =
-      document.getElementById(
-        "outdoorTab"
-      );
 
-
-    const indoorTab =
-      document.getElementById(
-        "indoorTab"
-      );
-
-
-    /* =========================
+    /* ================================
        ページ切り替え
-       ========================= */
+       ================================ */
 
     function showPage(page) {
 
-      currentPage =
-        page;
 
-
-      if (
-        page === "outdoor"
-      ) {
-
-        pages.classList.remove(
-          "indoor"
+      const outdoorPage =
+        document.getElementById(
+          "outdoorPage"
         );
 
-        pages.classList.add(
-          "outdoor"
+
+      const indoorPage =
+        document.getElementById(
+          "indoorPage"
         );
 
+
+      const outdoorTab =
+        document.getElementById(
+          "outdoorTab"
+        );
+
+
+      const indoorTab =
+        document.getElementById(
+          "indoorTab"
+        );
+
+
+
+      if (page === "outdoor") {
+
+        outdoorPage.classList.add(
+          "active"
+        );
+
+        indoorPage.classList.remove(
+          "active"
+        );
 
         outdoorTab.classList.add(
           "active"
@@ -297,21 +220,20 @@
           "active"
         );
 
+        currentPage = "outdoor";
+
       }
 
 
-      else if (
-        page === "indoor"
-      ) {
+      if (page === "indoor") {
 
-        pages.classList.remove(
-          "outdoor"
+        indoorPage.classList.add(
+          "active"
         );
 
-        pages.classList.add(
-          "indoor"
+        outdoorPage.classList.remove(
+          "active"
         );
-
 
         indoorTab.classList.add(
           "active"
@@ -321,164 +243,323 @@
           "active"
         );
 
+        currentPage = "indoor";
+
       }
 
     }
 
 
 
-    /* =========================
-       スワイプ処理
-       ========================= */
+    /* ================================
+       タブ
+       ================================ */
 
-    let startX = 0;
+    document
+      .getElementById("outdoorTab")
+      .addEventListener(
+        "click",
+        function() {
 
-    let startY = 0;
+          showPage("outdoor");
 
-    let startTime = 0;
-
-
-    const slider =
-      document.getElementById(
-        "slider"
+        }
       );
 
 
-    slider.addEventListener(
-      "touchstart",
-      function(event) {
+    document
+      .getElementById("indoorTab")
+      .addEventListener(
+        "click",
+        function() {
 
-        const touch =
-          event.touches[0];
+          showPage("indoor");
+
+        }
+      );
 
 
-        startX =
-          touch.clientX;
 
-        startY =
-          touch.clientY;
+    /* ================================
+       iframe内部へのスワイプ検知
+       
+       outdoor.html / indoor.html
+       は変更しない。
+       
+       index.htmlからiframe内部の
+       documentにイベントを設定する。
+       ================================ */
 
-        startTime =
-          Date.now();
+    function setupSwipe(
+      iframe,
+      pageName
+    ) {
 
-      },
-      {
-        passive: true
+
+      try {
+
+        const iframeDocument =
+          iframe.contentDocument ||
+          iframe.contentWindow.document;
+
+
+        if (!iframeDocument) {
+
+          return;
+
+        }
+
+
+        let startX = 0;
+        let startY = 0;
+        let startTime = 0;
+
+
+
+        iframeDocument.addEventListener(
+          "touchstart",
+          function(event) {
+
+
+            if (
+              !event.touches ||
+              event.touches.length === 0
+            ) {
+
+              return;
+
+            }
+
+
+            const touch =
+              event.touches[0];
+
+
+            startX =
+              touch.clientX;
+
+
+            startY =
+              touch.clientY;
+
+
+            startTime =
+              Date.now();
+
+          },
+          {
+            passive: true
+          }
+        );
+
+
+
+        iframeDocument.addEventListener(
+          "touchend",
+          function(event) {
+
+
+            if (
+              !event.changedTouches ||
+              event.changedTouches.length === 0
+            ) {
+
+              return;
+
+            }
+
+
+            const touch =
+              event.changedTouches[0];
+
+
+            const endX =
+              touch.clientX;
+
+
+            const endY =
+              touch.clientY;
+
+
+            const diffX =
+              endX - startX;
+
+
+            const diffY =
+              endY - startY;
+
+
+            const elapsed =
+              Date.now() -
+              startTime;
+
+
+
+            /*
+             * 横方向50px以上
+             *
+             * 横移動が縦移動より大きい
+             *
+             * 1秒以内
+             */
+
+            const horizontal =
+              Math.abs(diffX) >= 50 &&
+              Math.abs(diffX) >
+                Math.abs(diffY);
+
+
+            const quick =
+              elapsed < 1000;
+
+
+
+            if (
+              horizontal &&
+              quick
+            ) {
+
+
+              /*
+               * 屋外
+               *
+               * 左スワイプ
+               * ↓
+               * 屋内
+               */
+
+              if (
+                pageName === "outdoor" &&
+                diffX < 0
+              ) {
+
+                showPage("indoor");
+
+              }
+
+
+
+              /*
+               * 屋内
+               *
+               * 右スワイプ
+               * ↓
+               * 屋外
+               */
+
+              if (
+                pageName === "indoor" &&
+                diffX > 0
+              ) {
+
+                showPage("outdoor");
+
+              }
+
+            }
+
+
+
+            startX = 0;
+            startY = 0;
+            startTime = 0;
+
+          },
+          {
+            passive: true
+          }
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "スワイプ設定エラー:",
+          error
+        );
+
+      }
+
+    }
+
+
+
+    /* ================================
+       iframe読み込み完了時
+       ================================ */
+
+    const outdoorPage =
+      document.getElementById(
+        "outdoorPage"
+      );
+
+
+    const indoorPage =
+      document.getElementById(
+        "indoorPage"
+      );
+
+
+
+    outdoorPage.addEventListener(
+      "load",
+      function() {
+
+        setupSwipe(
+          outdoorPage,
+          "outdoor"
+        );
+
       }
     );
 
 
-    slider.addEventListener(
-      "touchend",
-      function(event) {
+    indoorPage.addEventListener(
+      "load",
+      function() {
 
-        const touch =
-          event.changedTouches[0];
+        setupSwipe(
+          indoorPage,
+          "indoor"
+        );
 
-
-        const endX =
-          touch.clientX;
-
-        const endY =
-          touch.clientY;
-
-
-        const diffX =
-          endX - startX;
-
-
-        const diffY =
-          endY - startY;
-
-
-        const elapsed =
-          Date.now() -
-          startTime;
-
-
-        /*
-         * 縦スクロールを
-         * 横スワイプと誤認しない
-         */
-
-        if (
-          Math.abs(diffX) <
-          Math.abs(diffY)
-        ) {
-
-          return;
-
-        }
-
-
-        /*
-         * 小さすぎる移動は無視
-         */
-
-        if (
-          Math.abs(diffX) < 50
-        ) {
-
-          return;
-
-        }
-
-
-        /*
-         * 長すぎる操作は無視
-         */
-
-        if (
-          elapsed > 800
-        ) {
-
-          return;
-
-        }
-
-
-        /*
-         * 左へスワイプ
-         *
-         * 屋外 → 屋内
-         */
-
-        if (
-          diffX < -50 &&
-          currentPage ===
-            "outdoor"
-        ) {
-
-          showPage(
-            "indoor"
-          );
-
-        }
-
-
-        /*
-         * 右へスワイプ
-         *
-         * 屋内 → 屋外
-         */
-
-        else if (
-          diffX > 50 &&
-          currentPage ===
-            "indoor"
-        ) {
-
-          showPage(
-            "outdoor"
-          );
-
-        }
-
-      },
-      {
-        passive: true
       }
     );
+
+
+
+    /*
+     * 念のため、
+     * すでに読み込み済みの場合にも設定
+     */
+
+    if (
+      outdoorPage.contentDocument &&
+      outdoorPage.contentDocument.readyState !==
+        "loading"
+    ) {
+
+      setupSwipe(
+        outdoorPage,
+        "outdoor"
+      );
+
+    }
+
+
+    if (
+      indoorPage.contentDocument &&
+      indoorPage.contentDocument.readyState !==
+        "loading"
+    ) {
+
+      setupSwipe(
+        indoorPage,
+        "indoor"
+      );
+
+    }
 
 
   </script>
