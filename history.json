@@ -6154,5 +6154,11 @@
     "temperature": 31.1,
     "humidity": 73,
     "pressure": 1016.6
+  },
+  {
+    "time": "2026-08-22 09:00",
+    "temperature": 31.6,
+    "humidity": 71,
+    "pressure": 1016.5
   }
 ]
