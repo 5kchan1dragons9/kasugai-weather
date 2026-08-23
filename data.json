@@ -1,8 +1,8 @@
 {
-  "temperature": 35.6,
+  "temperature": 35.8,
   "humidity": 57,
-  "pressure": 1016.6,
-  "max_temp": 35.6,
+  "pressure": 1016.4,
+  "max_temp": 35.8,
   "min_temp": 26.9,
-  "updated": "2026-08-23 11:50"
+  "updated": "2026-08-23 12:00"
 }
