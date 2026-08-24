@@ -10302,5 +10302,13 @@
     "pressure": 1014.9,
     "co2": 925,
     "noise": 43
+  },
+  {
+    "time": "2026-08-24 18:30",
+    "temperature": 26.7,
+    "humidity": 45,
+    "pressure": 1015.1,
+    "co2": 922,
+    "noise": 43
   }
 ]
