@@ -14,16 +14,28 @@ jobs:
 
     steps:
 
+      # ========================================
+      # Checkout
+      # ========================================
+
       - name: Checkout
         uses: actions/checkout@v4
 
 
-      - name: Get JMA warning data
+      # ========================================
+      # 気象庁XMLフィード取得
+      # ========================================
+
+      - name: Get JMA warning feed
         run: |
-          curl -L \
+          curl -L --compressed \
             "https://www.data.jma.go.jp/developer/xml/feed/regular.xml" \
             -o jma-feed.xml
 
+
+      # ========================================
+      # 警報・注意報データ作成
+      # ========================================
 
       - name: Create warning data
         run: |
@@ -32,9 +44,14 @@ jobs:
 
           import json
           import urllib.request
+          import urllib.parse
           import xml.etree.ElementTree as ET
           from datetime import datetime, timezone, timedelta
 
+
+          # ========================================
+          # 対象
+          # ========================================
 
           CITY_NAME = "春日井市"
           CITY_CODE = "2320600"
@@ -52,12 +69,11 @@ jobs:
           }
 
 
-          # --------------------------------
-          # 気象庁フィード
-          # --------------------------------
+          # ========================================
+          # 気象庁フィード読み込み
+          # ========================================
 
           feed = ET.parse("jma-feed.xml")
-
           root = feed.getroot()
 
           NS = {
@@ -65,90 +81,139 @@ jobs:
           }
 
 
-          # --------------------------------
-          # VPWS50だけを探す
-          # --------------------------------
+          # ========================================
+          # VPWS50（R06 集約通報）を探す
+          # ========================================
 
-          vpws_urls = []
+          entries = []
 
 
-          for entry in root.findall(
-              "atom:entry",
-              NS
-          ):
+          for entry in root.findall("atom:entry", NS):
 
-              title = entry.find(
-                  "atom:title",
-                  NS
-              )
+              title = entry.find("atom:title", NS)
 
               if title is None:
                   continue
 
-
-              title_text = title.text or ""
-
-
-              if (
-                  "気象警報・注意報（Ｒ０６）"
-                  in title_text
-                  and
-                  "集約通報"
-                  in title_text
-              ):
-
-                  for link in entry.findall(
-                      "atom:link",
-                      NS
-                  ):
-
-                      href = link.attrib.get("href")
-
-                      if href:
-                          vpws_urls.append(href)
+              title_text = (title.text or "").strip()
 
 
-          vpws_urls = list(
-              dict.fromkeys(vpws_urls)
-          )
+              # R06 集約通報
+              if "気象警報・注意報（Ｒ０６）（集約通報）" not in title_text:
+                  continue
 
 
-          # --------------------------------
-          # 最新のVPWS50だけ取得
-          # --------------------------------
+              updated = entry.find("atom:updated", NS)
 
-          if vpws_urls:
+              updated_text = ""
 
-              url = vpws_urls[0]
-
-              print("VPWS50:", url)
+              if updated is not None:
+                  updated_text = (updated.text or "").strip()
 
 
-              with urllib.request.urlopen(
-                  url,
-                  timeout=15
-              ) as response:
+              url = None
 
-                  xml_data = response.read()
+              for link in entry.findall("atom:link", NS):
+
+                  href = link.attrib.get("href")
+
+                  if href:
+                      url = href
+                      break
 
 
-              warning_root = ET.fromstring(
-                  xml_data
+              if url:
+                  entries.append(
+                      (
+                          updated_text,
+                          url
+                      )
+                  )
+
+
+          # ========================================
+          # 最新のVPWS50を選択
+          # ========================================
+
+          if not entries:
+
+              raise RuntimeError(
+                  "気象庁フィードからVPWS50（R06 集約通報）が見つかりませんでした。"
               )
 
 
-              # --------------------------------
-              # 春日井市を探す
-              # --------------------------------
+          entries.sort(
+              key=lambda x: x[0],
+              reverse=True
+          )
 
-              for area in warning_root.iter():
+
+          latest_updated, warning_url = entries[0]
+
+
+          print("最新VPWS50:")
+          print(warning_url)
+          print("フィード更新時刻:")
+          print(latest_updated)
+
+
+          # ========================================
+          # VPWS50 XML取得
+          # ========================================
+
+          request = urllib.request.Request(
+              warning_url,
+              headers={
+                  "User-Agent": "Mozilla/5.0"
+              }
+          )
+
+
+          with urllib.request.urlopen(
+              request,
+              timeout=30
+          ) as response:
+
+              xml_data = response.read()
+
+
+          warning_root = ET.fromstring(xml_data)
+
+
+          # ========================================
+          # Item単位で解析
+          #
+          # R06 XMLでは
+          #
+          # Item
+          #  ├─ Kind
+          #  └─ Area
+          #
+          # のようにKindとAreaが並ぶ構造になっているため、
+          # Areaだけを起点に探さない。
+          # ========================================
+
+          found_city = False
+
+
+          for item in warning_root.iter():
+
+              if not item.tag.endswith("Item"):
+                  continue
+
+
+              area_name = ""
+              area_code = ""
+
+
+              # ------------------------------------
+              # Item内のAreaを探す
+              # ------------------------------------
+
+              for area in item:
 
                   if not area.tag.endswith("Area"):
                       continue
-
-
-                  area_name = ""
-                  area_code = ""
 
 
                   for child in area:
@@ -158,74 +223,109 @@ jobs:
                               child.text or ""
                           ).strip()
 
-
-                      if child.tag.endswith("Code"):
+                      elif child.tag.endswith("Code"):
                           area_code = (
                               child.text or ""
                           ).strip()
 
 
-                  if not (
-                      area_name == CITY_NAME
-                      or area_code == CITY_CODE
-                  ):
+              # ------------------------------------
+              # 春日井市か確認
+              # ------------------------------------
+
+              if not (
+                  area_name == CITY_NAME
+                  or area_code == CITY_CODE
+              ):
+                  continue
+
+
+              found_city = True
+
+              print(
+                  "対象地域を発見:",
+                  area_name,
+                  area_code
+              )
+
+
+              # ------------------------------------
+              # Item内のKindを探す
+              # ------------------------------------
+
+              for kind in item:
+
+                  if not kind.tag.endswith("Kind"):
                       continue
 
 
+                  name = ""
+                  status = ""
+
+
+                  for child in kind:
+
+                      if child.tag.endswith("Name"):
+                          name = (
+                              child.text or ""
+                          ).strip()
+
+
+                      elif child.tag.endswith("Status"):
+                          status = (
+                              child.text or ""
+                          ).strip()
+
+
+                  if not name:
+                      continue
+
+
+                  print(
+                      "警報・注意報:",
+                      name,
+                      " / ",
+                      status
+                  )
+
+
                   # --------------------------------
-                  # Kindを取得
+                  # 現在発表中のものだけ取得
                   # --------------------------------
 
-                  for kind in area.iter():
+                  if status in (
+                      "発表",
+                      "継続"
+                  ):
 
-                      if not kind.tag.endswith("Kind"):
-                          continue
-
-
-                      name = ""
-                      status = ""
-
-
-                      for child in kind:
-
-                          if child.tag.endswith("Name"):
-                              name = (
-                                  child.text or ""
-                              ).strip()
-
-
-                          if child.tag.endswith("Status"):
-                              status = (
-                                  child.text or ""
-                              ).strip()
-
-
-                      if not name:
-                          continue
-
-
-                      if (
-                          "発表" in status
-                          or
-                          "継続" in status
+                      if not any(
+                          w["name"] == name
+                          for w in result["warnings"]
                       ):
 
-                          if not any(
-                              w["name"] == name
-                              for w in result["warnings"]
-                          ):
-
-                              result["warnings"].append(
-                                  {
-                                      "name": name,
-                                      "status": status
-                                  }
-                              )
+                          result["warnings"].append(
+                              {
+                                  "name": name,
+                                  "status": status
+                              }
+                          )
 
 
-          # --------------------------------
+          # ========================================
+          # 対象地域が見つからなかった場合
+          # ========================================
+
+          if not found_city:
+
+              print(
+                  "警告: 春日井市（2320600）が"
+                  "VPWS50 XML内に見つかりませんでした。"
+              )
+
+
+          # ========================================
           # 結果
-          # --------------------------------
+          # ========================================
 
           if result["warnings"]:
 
@@ -246,9 +346,9 @@ jobs:
               )
 
 
-          # --------------------------------
+          # ========================================
           # 保存
-          # --------------------------------
+          # ========================================
 
           with open(
               "warning-data.json",
@@ -263,8 +363,25 @@ jobs:
                   indent=2
               )
 
+
+          print("")
+          print("========================================")
+          print("最終結果")
+          print("========================================")
+          print(
+              json.dumps(
+                  result,
+                  ensure_ascii=False,
+                  indent=2
+              )
+          )
+
           PY
 
+
+      # ========================================
+      # GitHubへ反映
+      # ========================================
 
       - name: Commit warning data
         run: |
