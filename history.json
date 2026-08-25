@@ -9028,5 +9028,11 @@
     "temperature": 35.3,
     "humidity": 60,
     "pressure": 1012.8
+  },
+  {
+    "time": "2026-08-25 17:20",
+    "temperature": 35.2,
+    "humidity": 60,
+    "pressure": 1012.7
   }
 ]
