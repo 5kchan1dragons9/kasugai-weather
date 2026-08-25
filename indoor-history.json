@@ -11086,5 +11086,13 @@
     "pressure": 1016.8,
     "co2": 1107,
     "noise": 37
+  },
+  {
+    "time": "2026-08-25 11:00",
+    "temperature": 30.1,
+    "humidity": 53,
+    "pressure": 1016.7,
+    "co2": 1134,
+    "noise": 38
   }
 ]
