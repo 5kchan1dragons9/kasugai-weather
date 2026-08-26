@@ -2,9 +2,9 @@
   "temperature": 29.8,
   "humidity": 56,
   "pressure": 1012.4,
-  "co2": 935,
-  "noise": 37,
+  "co2": 943,
+  "noise": 47,
   "max_temp": 29.8,
   "min_temp": 28.1,
-  "updated": "2026-08-27 06:20"
+  "updated": "2026-08-27 06:30"
 }
