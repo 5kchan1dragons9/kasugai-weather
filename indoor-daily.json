@@ -78,8 +78,8 @@
   },
   {
     "date": "2026-08-26",
-    "max_temp": 33,
-    "max_temp_time": "2026-08-26 14:12",
+    "max_temp": 33.1,
+    "max_temp_time": "2026-08-26 14:27",
     "min_temp": 26.7,
     "min_temp_time": "2026-08-26 09:09"
   }
